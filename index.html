@@ -29,6 +29,17 @@
   body { background: var(--bg-body); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; }
   @media (min-width: 769px) { body { flex-direction: row; } }
 
+  /* TELA DE LOGIN */
+  .login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: var(--bg-body); display: flex; justify-content: center; align-items: center; z-index: 5000; padding: 20px; }
+  .login-box { background: #fff; padding: 30px; border-radius: 20px; box-shadow: var(--shadow); width: 100%; max-width: 380px; text-align: center; }
+  .login-box h2 { font-size: 1.8rem; margin-bottom: 10px; color: var(--bg-sidebar); }
+  .login-box p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 24px; }
+  .login-box input { width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #ddd; border-radius: 10px; font-size: 1rem; outline: none; }
+  .login-box input:focus { border-color: #999; }
+  .login-box button { width: 100%; padding: 12px; background: var(--bg-sidebar); color: white; border: none; border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: 0.2s; margin-top: 10px; }
+  .login-box button:hover { background: #333; }
+  .login-error { color: #c62828; font-size: 0.85rem; margin-top: 10px; display: none; }
+
   /* SIDEBAR & MENU MOBILE */
   .sidebar { width: 260px; background: var(--bg-sidebar); color: var(--sidebar-text); padding: 24px 20px; display: flex; flex-direction: column; position: fixed; height: 100vh; left: -280px; top: 0; border-top-right-radius: 24px; border-bottom-right-radius: 24px; overflow-y: auto; z-index: 1000; transition: left 0.3s ease; }
   .sidebar.open { left: 0; }
@@ -52,18 +63,17 @@
   .backup-area { margin-top: auto; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; gap: 8px; }
   .btn-sidebar { background: rgba(255,255,255,0.1); color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-size: 0.8rem; text-align: left; display: flex; align-items: center; gap: 8px; transition: 0.2s; }
   .btn-sidebar:hover { background: rgba(255,255,255,0.2); }
+  .btn-logout { background: rgba(198, 40, 40, 0.2); color: #ff8a80; margin-top: 10px; }
+  .btn-logout:hover { background: rgba(198, 40, 40, 0.4); }
 
   /* MAIN */
-  .main-content { flex: 1; padding: 20px 16px; display: flex; flex-direction: column; gap: 20px; width: 100%; max-width: 1400px; margin: 0 auto; }
+  .main-content { flex: 1; padding: 20px 16px; display: flex; flex-direction: column; gap: 20px; width: 100%; max-width: 1400px; margin: 0 auto; display: none; }
+  .main-content.active { display: flex; }
   @media (min-width: 769px) { .main-content { margin-left: 240px; padding: 30px 40px; width: calc(100% - 240px); } }
 
   .top-bar { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 10px; }
-  
   .menu-toggle { display: flex; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-main); }
   @media (min-width: 769px) { .menu-toggle { display: none; } }
-
-  .search-bar { background: #fff; border: 1px solid #eee; padding: 10px 16px; border-radius: 20px; display: none; align-items: center; gap: 8px; width: 300px; color: var(--text-muted); font-size: 0.9rem; }
-  @media (min-width: 600px) { .search-bar { display: flex; } }
 
   .top-actions { display: flex; align-items: center; gap: 10px; margin-left: auto; }
   .filter-select { background: #fff; border: 1px solid #eee; padding: 8px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 500; color: var(--text-main); cursor: pointer; outline: none; box-shadow: var(--shadow); }
@@ -153,17 +163,32 @@
   /* MODAL */
   .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(2px); z-index: 2000; justify-content: center; align-items: center; padding: 16px; }
   .modal-overlay.active { display: flex; }
-  .modal-content { background: #fff; border-radius: 20px; padding: 24px; width: 100%; max-width: 400px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); position: relative; animation: modalIn 0.3s ease-out; max-height: 90vh; overflow-y: auto; }
+  .modal-content { background: #fff; border-radius: 20px; padding: 24px; width: 100%; max-width: 420px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); position: relative; animation: modalIn 0.3s ease-out; max-height: 90vh; overflow-y: auto; }
   @keyframes modalIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
   .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-size: 1.1rem; font-weight: 600; }
   .modal-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-muted); }
   .modal-form { display: flex; flex-direction: column; gap: 12px; }
   .modal-form label { font-size: 0.85rem; font-weight: 500; color: var(--text-main); }
-  .modal-form input { padding: 12px; border: 1px solid #ddd; border-radius: 10px; font-size: 0.95rem; outline: none; width: 100%; }
-  .modal-form input:focus { border-color: #999; }
+  .modal-form input, .modal-form select { padding: 12px; border: 1px solid #ddd; border-radius: 10px; font-size: 0.95rem; outline: none; width: 100%; }
+  .modal-form input:focus, .modal-form select:focus { border-color: #999; }
+  
+  .historico-parcelas { margin-top: 10px; border-top: 1px solid #eee; padding-top: 10px; }
+  .historico-item { font-size: 0.8rem; color: var(--text-muted); display: flex; justify-content: space-between; margin-bottom: 4px; }
 </style>
 </head>
 <body>
+
+  <!-- TELA DE LOGIN -->
+  <div class="login-screen" id="loginScreen">
+    <div class="login-box">
+      <h2>✦ Finance Girl</h2>
+      <p>Acesse sua conta para gerenciar suas finanças.</p>
+      <input type="email" id="loginEmail" placeholder="Seu e-mail">
+      <input type="password" id="loginPassword" placeholder="Sua senha">
+      <button onclick="fazerLogin()">Entrar</button>
+      <div class="login-error" id="loginError">E-mail ou senha incorretos.</div>
+    </div>
+  </div>
 
   <!-- OVERLAY DO MENU MOBILE -->
   <div class="overlay-menu" id="overlayMenu" onclick="toggleMenu()"></div>
@@ -191,19 +216,19 @@
     </div>
 
     <div class="backup-area">
-      <button class="btn-sidebar" onclick="exportarBackup()"><i>📥</i> Baixar Backup (JSON)</button>
+      <button class="btn-sidebar" onclick="exportarBackup()"><i>📥</i> Baixar Backup</button>
       <button class="btn-sidebar" onclick="document.getElementById('inputBackup').click()"><i>📤</i> Restaurar Backup</button>
       <input type="file" id="inputBackup" accept=".json" style="display: none;" onchange="importarBackup(event)">
+      <button class="btn-sidebar btn-logout" onclick="fazerLogout()"><i>🚪</i> Sair da Conta</button>
     </div>
   </aside>
 
-  <main class="main-content">
+  <main class="main-content" id="mainContent">
     <div class="top-bar">
       <button class="menu-toggle" onclick="toggleMenu()">☰</button>
-      <div class="search-bar">🔍 Buscar...</div>
       <div class="top-actions">
         <select class="filter-select" id="filtroMes" onchange="renderTudo()"></select>
-        <div class="user-avatar">D</div>
+        <div class="user-avatar" id="userAvatar">D</div>
       </div>
     </div>
 
@@ -218,17 +243,18 @@
         <div class="cards-area">
           <div class="cards-row">
             <div class="card bg-verde">
-              <div class="card-header"><span>Salário Líquido</span><span>💼</span></div>
+              <div class="card-header">
+                <span>Salário Líquido</span>
+                <button class="card-icon-btn" onclick="abrirModalHorasExtras()" title="Adicionar Horas Extras">⚙️</button>
+              </div>
               <div class="card-valor" id="dashSalarioLiq">R$ 0,00</div>
-              <div class="card-sub" id="dashSalarioDetalhe">Bruto: R$ 0,00 | Líquido com extras</div>
+              <div class="card-sub" id="dashSalarioDetalhe">Bruto: R$ 0,00 | Líquido</div>
             </div>
             
             <div class="card bg-rosa">
               <div class="card-header">
                 <span>Descontos em Folha</span>
-                <button class="card-icon-btn" onclick="abrirModalDescontos()" title="Adicionar Descontos Esporádicos">
-                  ⚙️
-                </button>
+                <button class="card-icon-btn" onclick="abrirModalDescontos()" title="Adicionar Descontos">⚙️</button>
               </div>
               <div class="card-valor" id="dashDescontos">R$ 0,00</div>
               <div class="card-sub" id="dashDescontosDetalhe">INSS + Convênios</div>
@@ -303,8 +329,8 @@
 
     <!-- CARTÕES -->
     <section id="view-cartoes" class="view-section">
-      <div class="lista-card">
-        <div class="lista-header"><span>Faturas dos Cartões</span></div>
+      <div class="lista-card" style="margin-bottom: 20px;">
+        <div class="lista-header"><span>Faturas Simples (Mensais)</span></div>
         <div class="form-inline">
           <select id="cartaoNome" style="flex: 1;">
             <option value="Mercado Pago">Mercado Pago</option>
@@ -318,10 +344,32 @@
           </select>
           <input type="number" id="cartaoValor" placeholder="Valor Fatura (R$)" step="0.01">
           <input type="number" id="cartaoDia" placeholder="Dia venc." min="1" max="31">
-          <button class="btn" onclick="adicionarCartao()">Adicionar Fatura</button>
+          <button class="btn" onclick="adicionarCartao()">Adicionar</button>
         </div>
         <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
         <div id="listaCartoesCompleta"></div>
+      </div>
+
+      <div class="lista-card">
+        <div class="lista-header"><span>Compras Parceladas</span></div>
+        <div class="form-inline">
+          <select id="parcCartao" style="flex: 1;">
+            <option value="Mercado Pago">Mercado Pago</option>
+            <option value="Nubank">Nubank</option>
+            <option value="Renner">Renner</option>
+            <option value="C&A">C&A</option>
+            <option value="Riachuelo">Riachuelo</option>
+            <option value="Shopee">Shopee</option>
+            <option value="Mercado Livre">Mercado Livre</option>
+            <option value="Shein">Shein</option>
+          </select>
+          <input type="text" id="parcNome" placeholder="Descrição da compra" style="flex: 2;">
+          <input type="number" id="parcValorTotal" placeholder="Valor Total (R$)" step="0.01">
+          <input type="number" id="parcQtd" placeholder="Nº Parcelas" min="2" max="48">
+          <button class="btn" onclick="adicionarCompraParcelada()">Adicionar</button>
+        </div>
+        <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
+        <div id="listaComprasParceladas"></div>
       </div>
     </section>
 
@@ -355,98 +403,182 @@
     </section>
   </main>
 
-  <!-- MODAL DE DESCONTOS -->
-  <div class="modal-overlay" id="modalDescontos">
+  <!-- MODAIS -->
+  <div class="modal-overlay" id="modalHorasExtras">
     <div class="modal-content">
-      <div class="modal-header">
-        <span>Descontos Esporádicos</span>
-        <button class="modal-close" onclick="fecharModalDescontos()">&times;</button>
-      </div>
+      <div class="modal-header"><span>Horas Extras</span><button class="modal-close" onclick="fecharModalHorasExtras()">&times;</button></div>
       <div class="modal-form">
-        <label>Nome do Desconto</label>
-        <input type="text" id="descNome" placeholder="Ex: Coparticipação, Refeitório...">
-        
-        <label>Valor (R$)</label>
-        <input type="number" id="descValor" step="0.01" placeholder="0,00">
-        
-        <button class="btn" onclick="adicionarDescontoEsporadico()" style="margin-top: 10px;">Adicionar Desconto</button>
-      </div>
-      
-      <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
-      
-      <div id="listaDescontosEsporadicos" style="display: flex; flex-direction: column; gap: 8px; max-height: 200px; overflow-y: auto;">
-        <!-- Lista preenchida via JS -->
+        <label>Valor das Horas Extras neste mês (R$)</label>
+        <input type="number" id="inputHorasExtras" step="0.01" placeholder="0,00">
+        <button class="btn" onclick="salvarHorasExtras()" style="margin-top: 10px;">Salvar</button>
       </div>
     </div>
   </div>
 
+  <div class="modal-overlay" id="modalDescontos">
+    <div class="modal-content">
+      <div class="modal-header"><span>Descontos Esporádicos</span><button class="modal-close" onclick="fecharModalDescontos()">&times;</button></div>
+      <div class="modal-form">
+        <label>Nome do Desconto</label><input type="text" id="descNome" placeholder="Ex: Coparticipação">
+        <label>Valor (R$)</label><input type="number" id="descValor" step="0.01" placeholder="0,00">
+        <button class="btn" onclick="adicionarDescontoEsporadico()" style="margin-top: 10px;">Adicionar</button>
+      </div>
+      <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
+      <div id="listaDescontosEsporadicos" style="display: flex; flex-direction: column; gap: 8px; max-height: 200px; overflow-y: auto;"></div>
+    </div>
+  </div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+  import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+  import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyD81zzCOzX3R_qLFl80hj3KxqZ_keYNSFQ",
+    authDomain: "finance-girl-3f275.firebaseapp.com",
+    projectId: "finance-girl-3f275",
+    storageBucket: "finance-girl-3f275.firebasestorage.app",
+    messagingSenderId: "320810391592",
+    appId: "1:320810391592:web:155ecb41e59f082f95fd1d"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const auth = getAuth(app);
+
+  window.firebaseDB = db; window.firebaseDoc = doc; window.firebaseGetDoc = getDoc; window.firebaseSetDoc = setDoc;
+  window.firebaseAuth = auth; window.firebaseSignIn = signInWithEmailAndPassword; window.firebaseSignOut = signOut;
+  
+  window.firebaseOnAuth = onAuthStateChanged;
+  window.firebasePronto = true;
+</script>
+
 <script>
 /* ================= ESTADO E STORAGE ================= */
-const STORAGE_KEY = 'financas_v6';
-
+const STORAGE_KEY = 'financas_v8';
 let estado = {
-  salarioTotalBruto: 3398.00, 
-  horasExtras: 0,
-  convenioMedico: 76.19,
-  convenioOdonto: 22.81,
-  contas: [],
-  fixas: [],
-  cartoes: [],
-  cilios: [],
-  entradas: [],
-  descontosEsporadicos: []
+  salarioTotalBruto: 3398.00, horasExtras: 0, convenioMedico: 76.19, convenioOdonto: 22.81,
+  contas: [], fixas: [], cartoes: [], comprasParceladas: [], cilios: [], entradas: [], descontosEsporadicos: []
 };
-
 let mesSelecionado = "";
+let currentUser = null;
 
-function carregar() {
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (raw) {
-    try { estado = Object.assign(estado, JSON.parse(raw)); } catch(e){}
+/* ================= FIREBASE (AUTH E DB) ================= */
+async function fazerLogin() {
+  const email = document.getElementById('loginEmail').value;
+  const pass = document.getElementById('loginPassword').value;
+  const errorDiv = document.getElementById('loginError');
+  errorDiv.style.display = 'none';
+
+  if (!window.firebaseAuth) {
+    alert("O Firebase ainda está carregando. Aguarde 2 segundos e tente novamente.");
+    return;
+  }
+
+  try {
+    await window.firebaseSignIn(window.firebaseAuth, email, pass);
+    // O onAuthStateChanged vai cuidar do resto
+  } catch (error) {
+    console.error(error);
+    errorDiv.textContent = "Erro: Verifique seu e-mail e senha.";
+    errorDiv.style.display = 'block';
+  }
+}
+
+async function fazerLogout() {
+  if (confirm("Deseja sair da sua conta?")) {
+    await window.firebaseSignOut(window.firebaseAuth);
+  }
+}
+
+// Monitora o estado de login
+if (window.firebaseOnAuth) {
+  window.firebaseOnAuth(window.firebaseAuth, async (user) => {
+    if (user) {
+      currentUser = user;
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('mainContent').classList.add('active');
+      
+      // Pega a inicial do email para o avatar
+      document.getElementById('userAvatar').textContent = user.email.charAt(0).toUpperCase();
+      
+      await carregar();
+      (function() {
+        const hoje = new Date();
+        document.getElementById('entradaData').value = hoje.toISOString().slice(0,10);
+      })();
+      renderTudo();
+    } else {
+      currentUser = null;
+      document.getElementById('loginScreen').style.display = 'flex';
+      document.getElementById('mainContent').classList.remove('active');
+      document.getElementById('loginPassword').value = '';
+    }
+  });
+} else {
+  // Fallback caso o Firebase demore a carregar o módulo
+  setTimeout(() => {
+    if(!window.firebaseOnAuth) location.reload();
+  }, 2000);
+}
+
+async function salvar() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(estado));
+  if (window.firebasePronto && currentUser) {
+    try {
+      const docRef = window.firebaseDoc(window.firebaseDB, "usuarios", currentUser.uid);
+      await window.firebaseSetDoc(docRef, estado);
+    } catch (e) { console.error("Erro ao salvar na nuvem:", e); }
+  }
+}
+
+async function carregar() {
+  if (window.firebasePronto && currentUser) {
+    try {
+      const docRef = window.firebaseDoc(window.firebaseDB, "usuarios", currentUser.uid);
+      const docSnap = await window.firebaseGetDoc(docRef);
+      if (docSnap.exists()) {
+        estado = Object.assign(estado, docSnap.data());
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(estado));
+      } else {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) estado = Object.assign(estado, JSON.parse(raw));
+        await salvar(); // Cria o documento inicial
+      }
+    } catch (e) {
+      console.error("Erro ao carregar da nuvem:", e);
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) estado = Object.assign(estado, JSON.parse(raw));
+    }
   }
   if (!mesSelecionado) {
     const hoje = new Date();
     mesSelecionado = `${hoje.getFullYear()}-${String(hoje.getMonth()+1).padStart(2,'0')}`;
   }
-  salvar();
 }
 
-function salvar() { localStorage.setItem(STORAGE_KEY, JSON.stringify(estado)); }
-
-/* ================= BACKUP ================= */
+/* ================= BACKUP E MENU ================= */
 function exportarBackup() {
   const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(estado, null, 2));
-  const downloadAnchorNode = document.createElement('a');
-  downloadAnchorNode.setAttribute("href", dataStr);
-  downloadAnchorNode.setAttribute("download", `finance_girl_backup_${new Date().toISOString().slice(0,10)}.json`);
-  document.body.appendChild(downloadAnchorNode);
-  downloadAnchorNode.click();
-  downloadAnchorNode.remove();
+  const a = document.createElement('a'); a.setAttribute("href", dataStr); a.setAttribute("download", `finance_girl_backup_${new Date().toISOString().slice(0,10)}.json`);
+  document.body.appendChild(a); a.click(); a.remove();
 }
 
 function importarBackup(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-  
+  const file = event.target.files[0]; if (!file) return;
   const reader = new FileReader();
-  reader.onload = function(e) {
+  reader.onload = async function(e) {
     try {
       const dados = JSON.parse(e.target.result);
       if (confirm("Isso substituirá todos os seus dados atuais. Deseja continuar?")) {
-        estado = Object.assign(estado, dados);
-        salvar();
-        renderTudo();
-        alert("Backup restaurado com sucesso!");
+        estado = Object.assign(estado, dados); await salvar(); renderTudo();
+        alert("Backup restaurado!");
       }
-    } catch (err) {
-      alert("Erro ao ler o arquivo de backup. Verifique se é um JSON válido.");
-    }
+    } catch (err) { alert("Erro ao ler o arquivo JSON."); }
   };
-  reader.readAsText(file);
-  event.target.value = '';
+  reader.readAsText(file); event.target.value = '';
 }
 
-/* ================= MENU MOBILE ================= */
 function toggleMenu() {
   document.getElementById('sidebar').classList.toggle('open');
   document.getElementById('overlayMenu').classList.toggle('active');
@@ -455,62 +587,42 @@ function toggleMenu() {
 function configurarSalario() {
   const base = prompt("Salário Total Bruto (já com vale) (R$):", estado.salarioTotalBruto);
   if (base !== null) estado.salarioTotalBruto = parseFloat(base.replace(',', '.')) || 0;
-  
-  const he = prompt("Valor das Horas Extras neste mês (R$):", estado.horasExtras);
-  if (he !== null) estado.horasExtras = parseFloat(he.replace(',', '.')) || 0;
-  
   const med = prompt("Convênio Médico Fixo (R$):", estado.convenioMedico);
   if (med !== null) estado.convenioMedico = parseFloat(med.replace(',', '.')) || 0;
-  
   const odonto = prompt("Convênio Odontológico Fixo (R$):", estado.convenioOdonto);
   if (odonto !== null) estado.convenioOdonto = parseFloat(odonto.replace(',', '.')) || 0;
-
-  salvar();
-  renderTudo();
+  salvar(); renderTudo();
 }
 
-/* ================= CÁLCULO INSS 2026 ================= */
+/* ================= CÁLCULOS ================= */
 function calcularINSS(salarioBruto) {
   const faixas = [
-    { limite: 1621.00, aliquota: 0.075 },
-    { limite: 2902.84, aliquota: 0.09 },
-    { limite: 4354.27, aliquota: 0.12 },
-    { limite: 8475.55, aliquota: 0.14 }
+    { limite: 1621.00, aliquota: 0.075 }, { limite: 2902.84, aliquota: 0.09 },
+    { limite: 4354.27, aliquota: 0.12 }, { limite: 8475.55, aliquota: 0.14 }
   ];
   let inss = 0, base = salarioBruto, anterior = 0;
   for (let f of faixas) {
-    if (base > anterior) {
-      inss += (Math.min(base, f.limite) - anterior) * f.aliquota;
-      anterior = f.limite;
-    } else break;
+    if (base > anterior) { inss += (Math.min(base, f.limite) - anterior) * f.aliquota; anterior = f.limite; } else break;
   }
   return inss;
 }
 
-/* ================= FORMATAÇÃO E DATAS ================= */
 function formatarReal(v) { return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
 function formatarMes(mesStr) {
   if (!mesStr) return "--";
   const [ano, mes] = mesStr.split('-');
-  const nomes = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-  return `${nomes[parseInt(mes)-1]} ${ano}`;
+  const nomes = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  return `${nomes[parseInt(mes)-1]}/${ano}`;
 }
+function mesParaNumero(mesStr) { const [a, m] = mesStr.split('-'); return parseInt(a) * 12 + parseInt(m); }
+function numeroParaMes(num) { const a = Math.floor((num-1)/12); const m = (num-1)%12 + 1; return `${a}-${String(m).padStart(2,'0')}`; }
 const FERIADOS = ['01-01', '04-21', '05-01', '09-07', '10-12', '11-02', '11-15', '12-25'];
 function ehFeriado(data) { const mmdd = String(data.getMonth()+1).padStart(2,'0') + '-' + String(data.getDate()).padStart(2,'0'); return FERIADOS.includes(mmdd); }
 function ajustarFimSemana(data) { while (true) { const dow = data.getDay(); if (dow === 0 || dow === 6 || ehFeriado(data)) { data.setDate(data.getDate() - 1); } else break; } return data; }
 function formatarData(data) { return data.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' }); }
 
 function getIconeCartao(nome) {
-  const map = {
-    'Mercado Pago': 'icon-mp',
-    'Nubank': 'icon-nu',
-    'Renner': 'icon-renner',
-    'C&A': 'icon-cea',
-    'Riachuelo': 'icon-riachuelo',
-    'Shopee': 'icon-shopee',
-    'Mercado Livre': 'icon-mercadolivre',
-    'Shein': 'icon-shein'
-  };
+  const map = { 'Mercado Pago': 'icon-mp', 'Nubank': 'icon-nu', 'Renner': 'icon-renner', 'C&A': 'icon-cea', 'Riachuelo': 'icon-riachuelo', 'Shopee': 'icon-shopee', 'Mercado Livre': 'icon-mercadolivre', 'Shein': 'icon-shein' };
   return map[nome] || 'icon-mp';
 }
 
@@ -521,6 +633,7 @@ function renderTudo() {
   renderContasAba();
   renderFixasAba();
   renderCartoesAba();
+  renderComprasParceladasAba();
   renderCiliosAba();
   renderEntradasAba();
   renderListaDescontosModal();
@@ -551,7 +664,7 @@ function renderDashboard() {
   const liquido = bruto - totalDescontos;
 
   document.getElementById('dashSalarioLiq').textContent = formatarReal(liquido);
-  document.getElementById('dashSalarioDetalhe').textContent = `Bruto: ${formatarReal(bruto)} | Líquido com extras`;
+  document.getElementById('dashSalarioDetalhe').textContent = `Bruto: ${formatarReal(bruto)} | Líquido`;
   document.getElementById('dashDescontos').textContent = formatarReal(totalDescontos);
   
   let detalheDescontos = `INSS: ${formatarReal(inss)} | Convênios: ${formatarReal(descontosFixos)}`;
@@ -566,11 +679,23 @@ function renderDashboard() {
   const totalContas = contasMes.reduce((acc, c) => acc + c.valor, 0);
   const totalFixas = estado.fixas.reduce((acc, f) => acc + f.valor, 0);
   const cartoesMes = estado.cartoes.filter(c => c.mesRef === mesSelecionado);
-  const totalCartoes = cartoesMes.reduce((acc, c) => acc + c.valor, 0);
-  const totalSaidas = totalContas + totalFixas + totalCartoes;
+  const totalCartoesSimples = cartoesMes.reduce((acc, c) => acc + c.valor, 0);
+
+  let totalParcelasMes = 0;
+  const mesSelecionadoNum = mesParaNumero(mesSelecionado);
+  estado.comprasParceladas.forEach(p => {
+    const inicioNum = mesParaNumero(p.mesInicio);
+    const parcelaAtualIndex = mesSelecionadoNum - inicioNum;
+    if (parcelaAtualIndex >= 0 && parcelaAtualIndex < p.qtdParcelas) {
+      totalParcelasMes += p.valorTotal / p.qtdParcelas;
+    }
+  });
+
+  const totalCartoesGeral = totalCartoesSimples + totalParcelasMes;
+  const totalSaidas = totalContas + totalFixas + totalCartoesGeral;
 
   document.getElementById('dashSaidas').textContent = formatarReal(totalSaidas);
-  document.getElementById('dashSaidasSub').textContent = `Fixas: ${formatarReal(totalFixas)} | Cartões: ${formatarReal(totalCartoes)}`;
+  document.getElementById('dashSaidasSub').textContent = `Fixas: ${formatarReal(totalFixas)} | Cartões: ${formatarReal(totalCartoesGeral)}`;
 
   let totalEntradas = liquido + valorCilios;
   estado.entradas.forEach(e => { if (e.data && e.data.startsWith(mesSelecionado)) totalEntradas += e.valor; });
@@ -583,18 +708,35 @@ function renderDashboard() {
   renderListaGenerica(contasMes, 'dashListaContas', 'Nenhuma conta variável.');
   
   const cartoesContainer = document.getElementById('dashCartoesResumo');
-  if (cartoesMes.length === 0) cartoesContainer.innerHTML = '<div class="vazio">Nenhuma fatura.</div>';
-  else {
-    cartoesContainer.innerHTML = cartoesMes.map(c => `
-      <div class="lista-item">
-        <div class="item-info">
-          <div class="card-icon-box ${getIconeCartao(c.nome)}">${c.nome.charAt(0)}</div>
-          <div style="min-width:0;"><div class="item-nome">${c.nome}</div><div class="item-detalhe">Vence dia ${c.dia}</div></div>
-        </div>
-        <span class="item-valor">${formatarReal(c.valor)}</span>
+  let cartoesHtml = cartoesMes.map(c => `
+    <div class="lista-item">
+      <div class="item-info">
+        <div class="card-icon-box ${getIconeCartao(c.nome)}">${c.nome.charAt(0)}</div>
+        <div style="min-width:0;"><div class="item-nome">${c.nome} (Fatura)</div><div class="item-detalhe">Vence dia ${c.dia}</div></div>
       </div>
-    `).join('');
-  }
+      <span class="item-valor">${formatarReal(c.valor)}</span>
+    </div>
+  `).join('');
+
+  estado.comprasParceladas.forEach(p => {
+    const inicioNum = mesParaNumero(p.mesInicio);
+    const parcelaAtualIndex = mesSelecionadoNum - inicioNum;
+    if (parcelaAtualIndex >= 0 && parcelaAtualIndex < p.qtdParcelas) {
+      const valorParcela = p.valorTotal / p.qtdParcelas;
+      cartoesHtml += `
+        <div class="lista-item">
+          <div class="item-info">
+            <div class="card-icon-box ${getIconeCartao(p.cartao)}">${p.cartao.charAt(0)}</div>
+            <div style="min-width:0;"><div class="item-nome">${escapeHtml(p.nome)}</div><div class="item-detalhe">Parcela ${parcelaAtualIndex+1}/${p.qtdParcelas}</div></div>
+          </div>
+          <span class="item-valor">${formatarReal(valorParcela)}</span>
+        </div>
+      `;
+    }
+  });
+
+  if (!cartoesHtml) cartoesHtml = '<div class="vazio">Nenhuma fatura/parcela.</div>';
+  cartoesContainer.innerHTML = cartoesHtml;
 
   renderCalendario(ano, mes - 1);
 }
@@ -669,6 +811,24 @@ function adicionarCartao() {
   document.getElementById('cartaoValor').value = ''; document.getElementById('cartaoDia').value = '';
 }
 
+function adicionarCompraParcelada() {
+  const cartao = document.getElementById('parcCartao').value;
+  const nome = document.getElementById('parcNome').value.trim();
+  const valorTotal = parseFloat(document.getElementById('parcValorTotal').value);
+  const qtdParcelas = parseInt(document.getElementById('parcQtd').value);
+
+  if (!nome || isNaN(valorTotal) || isNaN(qtdParcelas) || qtdParcelas < 2) {
+    return alert('Preencha os dados corretamente (mínimo 2 parcelas).');
+  }
+
+  estado.comprasParceladas.push({
+    id: Date.now().toString(), cartao, nome, valorTotal, qtdParcelas, mesInicio: mesSelecionado
+  });
+
+  salvar(); renderTudo();
+  document.getElementById('parcNome').value = ''; document.getElementById('parcValorTotal').value = ''; document.getElementById('parcQtd').value = '';
+}
+
 function togglePaga(id) {
   const item = estado.contas.find(c => c.id === id) || estado.fixas.find(c => c.id === id) || estado.cartoes.find(c => c.id === id);
   if (item) { item.paga = !item.paga; salvar(); renderTudo(); }
@@ -679,6 +839,12 @@ function removerItem(id, tipo) {
   if (tipo === 'contas') estado.contas = estado.contas.filter(c => c.id !== id);
   if (tipo === 'fixas') estado.fixas = estado.fixas.filter(c => c.id !== id);
   if (tipo === 'cartoes') estado.cartoes = estado.cartoes.filter(c => c.id !== id);
+  salvar(); renderTudo();
+}
+
+function removerCompraParcelada(id) {
+  if (!confirm('Excluir esta compra parcelada?')) return;
+  estado.comprasParceladas = estado.comprasParceladas.filter(c => c.id !== id);
   salvar(); renderTudo();
 }
 
@@ -694,7 +860,7 @@ function renderFixasAba() {
 function renderCartoesAba() {
   const cartoesMes = estado.cartoes.filter(c => c.mesRef === mesSelecionado);
   const container = document.getElementById('listaCartoesCompleta');
-  if (cartoesMes.length === 0) { container.innerHTML = '<div class="vazio">Nenhuma fatura.</div>'; return; }
+  if (cartoesMes.length === 0) { container.innerHTML = '<div class="vazio">Nenhuma fatura simples.</div>'; return; }
   
   container.innerHTML = cartoesMes.map(c => `
     <div class="lista-item ${c.paga ? 'paga' : ''}">
@@ -709,6 +875,46 @@ function renderCartoesAba() {
       </div>
     </div>
   `).join('');
+}
+
+function renderComprasParceladasAba() {
+  const container = document.getElementById('listaComprasParceladas');
+  if (estado.comprasParceladas.length === 0) { container.innerHTML = '<div class="vazio">Nenhuma compra parcelada.</div>'; return; }
+
+  container.innerHTML = estado.comprasParceladas.map(p => {
+    const valorParcela = p.valorTotal / p.qtdParcelas;
+    const numInicio = mesParaNumero(p.mesInicio);
+    const numFim = numInicio + p.qtdParcelas - 1;
+    const mesFimStr = numeroParaMes(numFim);
+    const hoje = new Date();
+    const mesAtualStr = `${hoje.getFullYear()}-${String(hoje.getMonth()+1).padStart(2,'0')}`;
+    const numAtual = mesParaNumero(mesAtualStr);
+    
+    let status = "";
+    if (numAtual < numInicio) status = "A iniciar";
+    else if (numAtual >= numFim) status = "Finalizada";
+    else status = `Faltam ${numFim - numAtual} parcelas`;
+
+    return `
+    <div class="lista-item" style="flex-direction: column; align-items: stretch; gap: 8px;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+        <div class="item-info">
+          <div class="card-icon-box ${getIconeCartao(p.cartao)}" style="width:32px;height:32px;font-size:0.9rem;">${p.cartao.charAt(0)}</div>
+          <div>
+            <div class="item-nome">${escapeHtml(p.nome)} (${p.qtdParcelas}x)</div>
+            <div class="item-detalhe">${p.cartao} | Início: ${formatarMes(p.mesInicio)}</div>
+          </div>
+        </div>
+        <button class="btn btn-perigo" style="padding:4px 8px; font-size:0.7rem; width:auto;" onclick="removerCompraParcelada('${p.id}')">X</button>
+      </div>
+      <div class="historico-parcelas">
+        <div class="historico-item"><span>Valor da parcela:</span> <strong>${formatarReal(valorParcela)}</strong></div>
+        <div class="historico-item"><span>Previsão de término:</span> <strong>${formatarMes(mesFimStr)}</strong></div>
+        <div class="historico-item"><span>Status:</span> <strong style="color:${status === 'Finalizada' ? '#2e7d32' : 'var(--text-main)'}">${status}</strong></div>
+      </div>
+    </div>
+    `;
+  }).join('');
 }
 
 function salvarCilios() {
@@ -762,39 +968,39 @@ function renderEntradasAba() {
 }
 function removerEntrada(id) { if(confirm('Excluir?')) { estado.entradas = estado.entradas.filter(e => e.id !== id); salvar(); renderTudo(); } }
 
-/* ================= DESCONTOS ESPORÁDICOS ================= */
+/* ================= MODAIS ================= */
+function abrirModalHorasExtras() {
+  document.getElementById('inputHorasExtras').value = estado.horasExtras > 0 ? estado.horasExtras : '';
+  document.getElementById('modalHorasExtras').classList.add('active');
+}
+function fecharModalHorasExtras() { document.getElementById('modalHorasExtras').classList.remove('active'); }
+function salvarHorasExtras() {
+  const valor = parseFloat(document.getElementById('inputHorasExtras').value) || 0;
+  estado.horasExtras = valor; salvar(); renderTudo(); fecharModalHorasExtras();
+}
+
 function abrirModalDescontos() {
   document.getElementById('modalDescontos').classList.add('active');
   renderListaDescontosModal();
 }
-
-function fecharModalDescontos() {
-  document.getElementById('modalDescontos').classList.remove('active');
-}
-
+function fecharModalDescontos() { document.getElementById('modalDescontos').classList.remove('active'); }
 function adicionarDescontoEsporadico() {
   const nome = document.getElementById('descNome').value.trim();
   const valor = parseFloat(document.getElementById('descValor').value);
   if (!nome || isNaN(valor) || valor <= 0) return alert('Preencha o nome e um valor válido.');
   estado.descontosEsporadicos.push({ id: Date.now().toString(), mes: mesSelecionado, nome, valor });
   salvar(); renderTudo();
-  document.getElementById('descNome').value = '';
-  document.getElementById('descValor').value = '';
+  document.getElementById('descNome').value = ''; document.getElementById('descValor').value = '';
 }
-
 function removerDescontoEsporadico(id) {
   if (!confirm('Remover este desconto?')) return;
   estado.descontosEsporadicos = estado.descontosEsporadicos.filter(d => d.id !== id);
   salvar(); renderTudo();
 }
-
 function renderListaDescontosModal() {
   const container = document.getElementById('listaDescontosEsporadicos');
   const descontosMes = estado.descontosEsporadicos.filter(d => d.mes === mesSelecionado);
-  if (descontosMes.length === 0) {
-    container.innerHTML = '<div class="vazio" style="padding: 10px;">Nenhum desconto extra neste mês.</div>';
-    return;
-  }
+  if (descontosMes.length === 0) { container.innerHTML = '<div class="vazio" style="padding: 10px;">Nenhum desconto extra neste mês.</div>'; return; }
   container.innerHTML = descontosMes.map(d => `
     <div class="lista-item" style="padding: 8px 12px; margin-bottom: 0;">
       <div class="item-info"><div><div class="item-nome">${escapeHtml(d.nome)}</div></div></div>
@@ -823,23 +1029,14 @@ function mudarAba(aba) {
   });
   document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
   document.getElementById('view-' + aba).classList.add('active');
-  
-  if (window.innerWidth <= 768) toggleMenu(); // Fecha o menu no mobile ao clicar
+  if (window.innerWidth <= 768) toggleMenu();
 }
 
 function escapeHtml(s) { return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 
-/* ================= INIT ================= */
-carregar();
-(function() {
-  const hoje = new Date();
-  document.getElementById('entradaData').value = hoje.toISOString().slice(0,10);
-})();
-renderTudo();
-
-document.getElementById('modalDescontos').addEventListener('click', function(e) {
-  if (e.target === this) fecharModalDescontos();
-});
+// Eventos de fechar modal clicando fora
+document.getElementById('modalDescontos').addEventListener('click', function(e) { if (e.target === this) fecharModalDescontos(); });
+document.getElementById('modalHorasExtras').addEventListener('click', function(e) { if (e.target === this) fecharModalHorasExtras(); });
 </script>
 </body>
 </html>
