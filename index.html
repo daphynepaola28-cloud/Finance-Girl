@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -463,7 +463,6 @@
     let mesSelecionado = "";
     let currentUser = null;
 
-    // Função de login adaptada
     async function fazerLogin() {
       const email = document.getElementById('loginEmail').value;
       const pass = document.getElementById('loginPassword').value;
@@ -491,7 +490,6 @@
       }
     }
 
-    // Monitora o estado de login (Avisa quando o Firebase carregar)
     window.addEventListener('load', () => {
       setTimeout(() => {
         if (window.firebaseOnAuth) {
