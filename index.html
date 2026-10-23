@@ -589,7 +589,7 @@
 
   <!-- SCRIPT PRINCIPAL -->
   <script>
-    const STORAGE_KEY = 'financas_v18'; // Atualizado para v18
+    const STORAGE_KEY = 'financas_v19'; // Atualizado para v19
     let estado = {
       salarioTotalBruto: 3398.00, horasExtras: 0, 
       descontosFixos: [
@@ -718,7 +718,7 @@
             const dados = docSnap.data();
             estado = Object.assign(estado, dados);
             
-            // MIGRAÇÃO AUTOMÁTICA
+            // MIGRAÇÃO AUTOMÁTICA E GARANTIA DE CAIXINHAS
             if (estado.investimentos && !Array.isArray(estado.investimentos)) {
               const antigo = estado.investimentos;
               estado.investimentos = [
