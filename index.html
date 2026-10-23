@@ -117,6 +117,10 @@
   .calendario-grid .dia { padding: 6px 0; border-radius: 50%; cursor: pointer; }
   .calendario-grid .dia:hover { background: #f0f0f0; }
   .calendario-grid .dia.destaque { background: var(--cor-rosa); font-weight: bold; }
+  
+  /* NOVOS ESTILOS DO CALENDÁRIO */
+  .calendario-grid .dia.salario { background: #c2e1f4; color: #0056b3; font-weight: bold; border: 1px solid #90caf9; }
+  .calendario-grid .dia.vale { background: #c2e1f4; color: #0056b3; font-weight: bold; border: 1px solid #90caf9; }
 
   /* LISTAS */
   .lista-card { background: var(--card-bg); border-radius: var(--border-radius); padding: 16px; box-shadow: var(--shadow); }
@@ -159,30 +163,33 @@
   
   /* LOGOS VETORIAIS DOS CARTÕES */
   .logo-box { width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold; font-size: 1.2rem; color: #fff; overflow: hidden; }
-  
   .logo-mp { background: #009ee3; font-size: 0.9rem; border-radius: 50%; }
   .logo-mp::before { content: "MP"; }
-  
   .logo-nu { background: #820ad1; font-family: sans-serif; font-size: 1.5rem; border-radius: 8px; }
   .logo-nu::before { content: "nu"; }
-  
   .logo-renner { background: #fff; border: 2px solid #e30613; color: #e30613; font-family: serif; font-size: 1.4rem; border-radius: 50%; font-weight: bold;}
   .logo-renner::before { content: "R"; }
-  
   .logo-riachuelo { background: #000; font-size: 0.8rem; font-weight: bold; border-radius: 4px;}
   .logo-riachuelo::before { content: "RCHLO"; }
-  
   .logo-shopee { background: #fff; color: #ee4d2d; border: 2px solid #ee4d2d; font-size: 1.5rem; border-radius: 8px;}
   .logo-shopee::before { content: "S"; }
-  
   .logo-mercadolivre { background: #ffe600; color: #333; font-size: 0.7rem; font-weight: bold; border-radius: 50%; }
   .logo-mercadolivre::before { content: "ML"; }
-  
   .logo-shein { background: #000; font-family: sans-serif; font-size: 0.8rem; border-radius: 50%;}
   .logo-shein::before { content: "SHEIN"; }
-  
   .logo-cea { background: #000; font-family: serif; font-size: 1.1rem; border-radius: 50%;}
   .logo-cea::before { content: "C&A"; }
+
+  /* NOVA ABA INVESTIMENTOS */
+  .grid-investimentos { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+  .caixinha { background: var(--card-bg); border-radius: var(--border-radius); padding: 20px; box-shadow: var(--shadow); display: flex; flex-direction: column; align-items: center; text-align: center; border: 1px solid #f0f0f0; }
+  .caixinha-icon { font-size: 2.5rem; margin-bottom: 10px; line-height: 1; }
+  .caixinha-nome { font-weight: 600; font-size: 1rem; margin-bottom: 4px; color: var(--text-main); }
+  .caixinha-valor { font-size: 1.4rem; font-weight: 700; margin-bottom: 16px; color: var(--text-main); }
+  .caixinha-acoes { display: flex; gap: 8px; width: 100%; }
+  .caixinha-acoes button { flex: 1; padding: 8px; font-size: 0.75rem; border-radius: 8px; }
+  .btn-depositar { background: #e8f5e9; color: #2e7d32; }
+  .btn-resgatar { background: #ffebee; color: #c62828; }
 
   /* MODAL */
   .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(2px); z-index: 2000; justify-content: center; align-items: center; padding: 16px; }
@@ -233,8 +240,9 @@
       <div class="menu-item" onclick="mudarAba('contas')"><i>📅</i> Contas Variáveis</div>
       <div class="menu-item" onclick="mudarAba('fixas')"><i>🏠</i> Despesas Fixas</div>
       <div class="menu-item" onclick="mudarAba('cartoes')"><i>💳</i> Cartões</div>
+      <div class="menu-item" onclick="mudarAba('investimentos')"><i>💰</i> Investimentos</div>
       <div class="menu-item" onclick="mudarAba('cilios')"><i>✨</i> Cílios</div>
-      <div class="menu-item" onclick="mudarAba('entradas')"><i>💰</i> Outras Entradas</div>
+      <div class="menu-item" onclick="mudarAba('entradas')"><i>💵</i> Outras Entradas</div>
     </div>
 
     <div class="backup-area">
@@ -357,10 +365,7 @@
       <div class="lista-card" style="margin-bottom: 20px;">
         <div class="lista-header"><span>Faturas Simples (Mensais)</span></div>
         
-        <!-- Grid de Logos -->
-        <div class="grid-cartoes" id="gridCartoesSimples">
-          <!-- Preenchido via JS -->
-        </div>
+        <div class="grid-cartoes" id="gridCartoesSimples"></div>
 
         <div class="form-inline" style="margin-top: 0;">
           <input type="text" id="cartaoNomeSelected" placeholder="Cartão selecionado" readonly style="background:#f5f5f5; font-weight:bold; color:#222;">
@@ -375,10 +380,7 @@
       <div class="lista-card">
         <div class="lista-header"><span>Compras Parceladas</span></div>
         
-        <!-- Grid de Logos -->
-        <div class="grid-cartoes" id="gridCartoesParcelados">
-          <!-- Preenchido via JS -->
-        </div>
+        <div class="grid-cartoes" id="gridCartoesParcelados"></div>
 
         <div class="form-inline" style="margin-top: 0;">
           <input type="text" id="parcCartaoSelected" placeholder="Cartão selecionado" readonly style="background:#f5f5f5; font-weight:bold; color:#222;">
@@ -389,6 +391,13 @@
         </div>
         <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
         <div id="listaComprasParceladas"></div>
+      </div>
+    </section>
+
+    <!-- INVESTIMENTOS -->
+    <section id="view-investimentos" class="view-section">
+      <div class="grid-investimentos" id="gridInvestimentos">
+        <!-- Renderizado via JS -->
       </div>
     </section>
 
@@ -462,6 +471,19 @@
     </div>
   </div>
 
+  <div class="modal-overlay" id="modalInvestimento">
+    <div class="modal-content">
+      <div class="modal-header"><span id="invModalTitle">Investimento</span><button class="modal-close" onclick="fecharModalInvestimento()">&times;</button></div>
+      <div class="modal-form">
+        <input type="hidden" id="invIdInput">
+        <input type="hidden" id="invAcaoInput">
+        <label id="invModalLabel">Valor (R$)</label>
+        <input type="number" id="invValorInput" step="0.01" placeholder="0,00">
+        <button class="btn" id="invModalBtn" onclick="salvarInvestimento()" style="margin-top: 10px;">Salvar</button>
+      </div>
+    </div>
+  </div>
+
   <!-- SCRIPT FIREBASE -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
@@ -481,7 +503,6 @@
     const db = getFirestore(app);
     const auth = getAuth(app);
 
-    // Força a persistência local do login (mantém logado)
     setPersistence(auth, browserLocalPersistence).catch(console.error);
 
     window.firebaseDB = db; window.firebaseDoc = doc; window.firebaseGetDoc = getDoc; window.firebaseSetDoc = setDoc;
@@ -492,19 +513,23 @@
 
   <!-- SCRIPT PRINCIPAL -->
   <script>
-    const STORAGE_KEY = 'financas_v9'; // Atualizado
+    const STORAGE_KEY = 'financas_v10'; // Atualizado para v10
     let estado = {
       salarioTotalBruto: 3398.00, horasExtras: 0, convenioMedico: 76.19, convenioOdonto: 22.81,
-      contas: [], fixas: [], cartoes: [], comprasParceladas: [], cilios: [], entradas: [], descontosEsporadicos: []
+      contas: [], fixas: [], cartoes: [], comprasParceladas: [], cilios: [], entradas: [], descontosEsporadicos: [],
+      investimentos: {
+        emergencia: 0,
+        aposentadoria: 0,
+        viagens: 0,
+        aplicacoes: 0
+      }
     };
     let mesSelecionado = "";
     let currentUser = null;
     
-    // Variáveis de seleção visual de cartão
     let cartaoSimplesSelecionado = "";
     let cartaoParceladoSelecionado = "";
 
-    // Lista de cartões (Ordem Alfabética)
     const listaCartoes = [
       { nome: 'C&A', logo: 'logo-cea' },
       { nome: 'Mercado Livre', logo: 'logo-mercadolivre' },
@@ -516,7 +541,13 @@
       { nome: 'Shopee', logo: 'logo-shopee' }
     ];
 
-    // Função para lembrar o e-mail
+    const caixinhasInvestimento = [
+      { id: 'emergencia', nome: 'Emergência', icone: '🛟' },
+      { id: 'aposentadoria', nome: 'Aposentadoria', icone: '⏳' },
+      { id: 'viagens', nome: 'Viagens', icone: '✈️' },
+      { id: 'aplicacoes', nome: 'Aplicações', icone: '🐷' }
+    ];
+
     window.addEventListener('load', () => {
       const savedEmail = localStorage.getItem('financeGirlSavedEmail');
       if (savedEmail) {
@@ -570,8 +601,8 @@
               document.getElementById('userAvatar').textContent = user.email.charAt(0).toUpperCase();
               await carregar();
               
-              // Inicializa a UI
               renderCartoesUI();
+              renderInvestimentosUI();
               renderTudo();
             } else {
               currentUser = null;
@@ -600,7 +631,10 @@
           const docRef = window.firebaseDoc(window.firebaseDB, "usuarios", currentUser.uid);
           const docSnap = await window.firebaseGetDoc(docRef);
           if (docSnap.exists()) {
-            estado = Object.assign(estado, docSnap.data());
+            const dados = docSnap.data();
+            // Merge profundo para não perder a estrutura de investimentos
+            estado = Object.assign(estado, dados);
+            if (!estado.investimentos) estado.investimentos = { emergencia: 0, aposentadoria: 0, viagens: 0, aplicacoes: 0 };
             localStorage.setItem(STORAGE_KEY, JSON.stringify(estado));
           } else {
             const raw = localStorage.getItem(STORAGE_KEY);
@@ -706,6 +740,58 @@
       `).join('');
     }
 
+    /* ================= INVESTIMENTOS ================= */
+    function renderInvestimentosUI() {
+      const container = document.getElementById('gridInvestimentos');
+      container.innerHTML = caixinhasInvestimento.map(cx => {
+        const valor = estado.investimentos[cx.id] || 0;
+        return `
+          <div class="caixinha">
+            <div class="caixinha-icon">${cx.icone}</div>
+            <div class="caixinha-nome">${cx.nome}</div>
+            <div class="caixinha-valor">${formatarReal(valor)}</div>
+            <div class="caixinha-acoes">
+              <button class="btn btn-depositar" onclick="abrirModalInvestimento('${cx.id}', 'depositar')">+ Depositar</button>
+              <button class="btn btn-resgatar" onclick="abrirModalInvestimento('${cx.id}', 'resgatar')">- Resgatar</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function abrirModalInvestimento(id, acao) {
+      const caixinha = caixinhasInvestimento.find(c => c.id === id);
+      document.getElementById('invIdInput').value = id;
+      document.getElementById('invAcaoInput').value = acao;
+      document.getElementById('invModalTitle').textContent = acao === 'depositar' ? 'Depositar' : 'Resgatar';
+      document.getElementById('invModalLabel').textContent = `Valor para ${acao} em ${caixinha.nome} (R$)`;
+      document.getElementById('invValorInput').value = '';
+      document.getElementById('modalInvestimento').classList.add('active');
+    }
+    function fecharModalInvestimento() {
+      document.getElementById('modalInvestimento').classList.remove('active');
+    }
+    function salvarInvestimento() {
+      const id = document.getElementById('invIdInput').value;
+      const acao = document.getElementById('invAcaoInput').value;
+      const valor = parseFloat(document.getElementById('invValorInput').value);
+
+      if (isNaN(valor) || valor <= 0) return alert("Insira um valor válido.");
+
+      if (!estado.investimentos[id]) estado.investimentos[id] = 0;
+
+      if (acao === 'depositar') {
+        estado.investimentos[id] += valor;
+      } else {
+        if (valor > estado.investimentos[id]) return alert("Saldo insuficiente para resgate.");
+        estado.investimentos[id] -= valor;
+      }
+
+      salvar();
+      renderInvestimentosUI();
+      fecharModalInvestimento();
+    }
+
     /* ================= CÁLCULOS ================= */
     function calcularINSS(salarioBruto) {
       const faixas = [
@@ -728,10 +814,30 @@
     }
     function mesParaNumero(mesStr) { const [a, m] = mesStr.split('-'); return parseInt(a) * 12 + parseInt(m); }
     function numeroParaMes(num) { const a = Math.floor((num-1)/12); const m = (num-1)%12 + 1; return `${a}-${String(m).padStart(2,'0')}`; }
+    
     const FERIADOS = ['01-01', '04-21', '05-01', '09-07', '10-12', '11-02', '11-15', '12-25'];
     function ehFeriado(data) { const mmdd = String(data.getMonth()+1).padStart(2,'0') + '-' + String(data.getDate()).padStart(2,'0'); return FERIADOS.includes(mmdd); }
     function ajustarFimSemana(data) { while (true) { const dow = data.getDay(); if (dow === 0 || dow === 6 || ehFeriado(data)) { data.setDate(data.getDate() - 1); } else break; } return data; }
     function formatarData(data) { return data.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' }); }
+
+    function getQuintoDiaUtil(ano, mes) {
+      let uteis = 0;
+      for (let d = 1; d <= 31; d++) {
+        const data = new Date(ano, mes - 1, d);
+        if (data.getMonth() !== mes - 1) break;
+        const dow = data.getDay();
+        if (dow >= 1 && dow <= 5) {
+          uteis++;
+          if (uteis === 5) return data; // O 5º dia útil real
+        }
+      }
+      return new Date(ano, mes - 1, 30);
+    }
+
+    function getDia20(ano, mes) {
+      const data = new Date(ano, mes - 1, 20);
+      return ajustarFimSemana(data);
+    }
 
     function getClasseLogoCartao(nome) {
       const cartao = listaCartoes.find(c => c.nome === nome);
@@ -789,6 +895,7 @@
       renderCiliosAba();
       renderEntradasAba();
       renderListaDescontosModal();
+      renderInvestimentosUI();
     }
 
     function preencherFiltroMeses() {
@@ -915,19 +1022,38 @@
       const container = document.getElementById('calendarioGrid');
       const title = document.getElementById('calendarioMesAno');
       title.textContent = formatarMes(`${ano}-${String(mes+1).padStart(2,'0')}`);
+      
       const diasSemana = ['D','S','T','Q','Q','S','S'];
       let html = diasSemana.map(d => `<div class="dias-semana">${d}</div>`).join('');
+      
       const primeiroDia = new Date(ano, mes, 1).getDay();
       const diasNoMes = new Date(ano, mes + 1, 0).getDate();
       for (let i = 0; i < primeiroDia; i++) html += `<div></div>`;
+      
       const hoje = new Date();
       const ehMesAtual = hoje.getFullYear() === ano && hoje.getMonth() === mes;
+      
+      // Pega as datas especiais do mês exibido
+      const dataSalario = getQuintoDiaUtil(ano, mes + 1);
+      const dataVale = getDia20(ano, mes + 1);
+
       for (let d = 1; d <= diasNoMes; d++) {
         const isHoje = ehMesAtual && hoje.getDate() === d;
         const mesStr = `${ano}-${String(mes+1).padStart(2,'0')}`;
+        
+        // Verifica contas
         const temConta = estado.contas.some(c => c.mesRef === mesStr && c.dia === d) || estado.fixas.some(c => c.dia === d) || estado.cartoes.some(c => c.mesRef === mesStr && c.dia === d);
-        let classe = 'dia' + (isHoje ? ' destaque' : '');
-        html += `<div class="${classe}" style="${temConta ? 'font-weight:bold; border:1px solid #f4c2d7;' : ''}">${d}</div>`;
+        
+        let classes = ['dia'];
+        if (isHoje) classes.push('destaque');
+        
+        // Verifica se é dia de receber salário ou vale
+        if (d === dataSalario.getDate()) classes.push('salario');
+        if (d === dataVale.getDate()) classes.push('vale');
+
+        let styleAdd = temConta ? 'border: 2px solid #f4c2d7;' : '';
+
+        html += `<div class="${classes.join(' ')}" style="${styleAdd}" title="${classes.includes('salario') ? 'Salário' : classes.includes('vale') ? 'Vale' : ''}">${d}</div>`;
       }
       container.innerHTML = html;
     }
@@ -1126,6 +1252,7 @@
             (aba === 'contas' && txt.includes('variáveis')) ||
             (aba === 'fixas' && txt.includes('fixas')) ||
             (aba === 'cartoes' && txt.includes('cartões')) ||
+            (aba === 'investimentos' && txt.includes('investimentos')) ||
             (aba === 'cilios' && txt.includes('cílios')) ||
             (aba === 'entradas' && txt.includes('entradas'))) {
           item.classList.add('active');
@@ -1142,6 +1269,7 @@
     document.getElementById('modalDescontos').addEventListener('click', function(e) { if (e.target === this) fecharModalDescontos(); });
     document.getElementById('modalHorasExtras').addEventListener('click', function(e) { if (e.target === this) fecharModalHorasExtras(); });
     document.getElementById('modalConfigSalario').addEventListener('click', function(e) { if (e.target === this) fecharModalConfigSalario(); });
+    document.getElementById('modalInvestimento').addEventListener('click', function(e) { if (e.target === this) fecharModalInvestimento(); });
   </script>
 </body>
 </html>
