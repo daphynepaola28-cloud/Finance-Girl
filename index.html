@@ -589,7 +589,7 @@
 
   <!-- SCRIPT PRINCIPAL -->
   <script>
-    const STORAGE_KEY = 'financas_v17'; // Atualizado para v17
+    const STORAGE_KEY = 'financas_v18'; // Atualizado para v18
     let estado = {
       salarioTotalBruto: 3398.00, horasExtras: 0, 
       descontosFixos: [
@@ -597,7 +597,7 @@
         { id: 'odonto', nome: 'Convênio Odontológico', valor: 22.81 }
       ],
       contas: [], fixas: [], cartoes: [], comprasParceladas: [], cilios: [], entradas: [], descontosEsporadicos: [],
-      investimentos: [], // Agora é um Array de objetos
+      investimentos: [], // Array de objetos
       extrato: []
     };
     let mesSelecionado = "";
@@ -718,7 +718,7 @@
             const dados = docSnap.data();
             estado = Object.assign(estado, dados);
             
-            // MIGRAÇÃO AUTOMÁTICA: Se investimentos for um objeto (formato antigo), converte para Array
+            // MIGRAÇÃO AUTOMÁTICA
             if (estado.investimentos && !Array.isArray(estado.investimentos)) {
               const antigo = estado.investimentos;
               estado.investimentos = [
@@ -728,7 +728,14 @@
                 { id: 'aplicacoes', nome: 'Aplicações', tipoIcone: 'aplicacoes', valor: antigo.aplicacoes || 0 }
               ];
             }
-            if (!Array.isArray(estado.investimentos)) estado.investimentos = [];
+            if (!Array.isArray(estado.investimentos) || estado.investimentos.length === 0) {
+              estado.investimentos = [
+                { id: 'emergencia', nome: 'Emergência', tipoIcone: 'emergencia', valor: 0 },
+                { id: 'aposentadoria', nome: 'Aposentadoria', tipoIcone: 'aposentadoria', valor: 0 },
+                { id: 'viagens', nome: 'Viagens', tipoIcone: 'viagens', valor: 0 },
+                { id: 'aplicacoes', nome: 'Aplicações', tipoIcone: 'aplicacoes', valor: 0 }
+              ];
+            }
             if (!estado.extrato) estado.extrato = [];
             if (!estado.descontosFixos) {
               estado.descontosFixos = [
@@ -754,7 +761,6 @@
         document.getElementById('entradaData').value = hoje.toISOString().slice(0,10);
       }
       atualizarSaudacao();
-      renderInvestimentosUI(); // Garante que renderiza após a migração
     }
 
     function atualizarSaudacao() {
@@ -967,6 +973,9 @@
       const container = document.getElementById('gridInvestimentos');
       if (!container) return;
       
+      // Garante que o array está pronto antes de renderizar
+      if (!Array.isArray(estado.investimentos)) estado.investimentos = [];
+
       container.innerHTML = estado.investimentos.map(cx => {
         let svgIcon = svgAplicacoes;
         if (cx.tipoIcone === 'emergencia') svgIcon = svgEmergencia;
