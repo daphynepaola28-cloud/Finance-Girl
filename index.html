@@ -39,6 +39,8 @@
   .login-box button { width: 100%; padding: 12px; background: var(--bg-sidebar); color: white; border: none; border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: 0.2s; margin-top: 10px; }
   .login-box button:hover { background: #333; }
   .login-error { color: #c62828; font-size: 0.85rem; margin-top: 10px; display: none; }
+  .remember-me { display: flex; align-items: center; gap: 8px; justify-content: flex-start; margin-bottom: 15px; font-size: 0.85rem; color: var(--text-muted); cursor: pointer; }
+  .remember-me input { width: auto; margin: 0; cursor: pointer; }
 
   /* SIDEBAR & MENU MOBILE */
   .sidebar { width: 260px; background: var(--bg-sidebar); color: var(--sidebar-text); padding: 24px 20px; display: flex; flex-direction: column; position: fixed; height: 100vh; left: -280px; top: 0; border-top-right-radius: 24px; border-bottom-right-radius: 24px; overflow-y: auto; z-index: 1000; transition: left 0.3s ease; }
@@ -143,22 +145,44 @@
   .form-inline { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
   @media (min-width: 600px) { .form-inline { flex-direction: row; flex-wrap: wrap; } }
   .form-inline input, .form-inline select { padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 0.85rem; outline: none; flex: 1; min-width: 100px; }
-  .form-inline input:focus { border-color: #999; }
+  .form-inline input:focus, .form-inline select:focus { border-color: #999; }
 
   .view-section { display: none; }
   .view-section.active { display: block; }
   .vazio { text-align: center; padding: 20px; color: var(--text-muted); font-size: 0.85rem; }
 
-  /* CARDS ÍCONES */
-  .card-icon-box { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; font-weight: bold; color: #fff; flex-shrink: 0; }
-  .icon-mp { background: #009ee3; }
-  .icon-nu { background: #820ad1; }
-  .icon-renner { background: #e30613; }
-  .icon-cea { background: #000000; }
-  .icon-riachuelo { background: #e5004b; }
-  .icon-shopee { background: #ee4d2d; }
-  .icon-mercadolivre { background: #ffe600; color: #333; }
-  .icon-shein { background: #000000; }
+  /* GRID DE CARTÕES (BOTÕES VISUAIS) */
+  .grid-cartoes { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; margin-bottom: 20px; }
+  .cartao-btn { background: #fff; border: 2px solid #eee; border-radius: 12px; padding: 15px 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; text-align: center; gap: 8px; }
+  .cartao-btn:hover { border-color: #ccc; transform: translateY(-2px); }
+  .cartao-btn.selected { border-color: #222; box-shadow: 0 0 0 2px rgba(34,34,34,0.1); }
+  
+  /* LOGOS VETORIAIS DOS CARTÕES */
+  .logo-box { width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold; font-size: 1.2rem; color: #fff; overflow: hidden; }
+  
+  .logo-mp { background: #009ee3; font-size: 0.9rem; border-radius: 50%; }
+  .logo-mp::before { content: "MP"; }
+  
+  .logo-nu { background: #820ad1; font-family: sans-serif; font-size: 1.5rem; border-radius: 8px; }
+  .logo-nu::before { content: "nu"; }
+  
+  .logo-renner { background: #fff; border: 2px solid #e30613; color: #e30613; font-family: serif; font-size: 1.4rem; border-radius: 50%; font-weight: bold;}
+  .logo-renner::before { content: "R"; }
+  
+  .logo-riachuelo { background: #000; font-size: 0.8rem; font-weight: bold; border-radius: 4px;}
+  .logo-riachuelo::before { content: "RCHLO"; }
+  
+  .logo-shopee { background: #fff; color: #ee4d2d; border: 2px solid #ee4d2d; font-size: 1.5rem; border-radius: 8px;}
+  .logo-shopee::before { content: "S"; }
+  
+  .logo-mercadolivre { background: #ffe600; color: #333; font-size: 0.7rem; font-weight: bold; border-radius: 50%; }
+  .logo-mercadolivre::before { content: "ML"; }
+  
+  .logo-shein { background: #000; font-family: sans-serif; font-size: 0.8rem; border-radius: 50%;}
+  .logo-shein::before { content: "SHEIN"; }
+  
+  .logo-cea { background: #000; font-family: serif; font-size: 1.1rem; border-radius: 50%;}
+  .logo-cea::before { content: "C&A"; }
 
   /* MODAL */
   .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(2px); z-index: 2000; justify-content: center; align-items: center; padding: 16px; }
@@ -185,6 +209,9 @@
       <p>Acesse sua conta para gerenciar suas finanças.</p>
       <input type="email" id="loginEmail" placeholder="Seu e-mail">
       <input type="password" id="loginPassword" placeholder="Sua senha">
+      <label class="remember-me">
+        <input type="checkbox" id="rememberEmail"> Lembrar meu e-mail
+      </label>
       <button onclick="fazerLogin()">Entrar</button>
       <div class="login-error" id="loginError">E-mail ou senha incorretos.</div>
     </div>
@@ -208,11 +235,6 @@
       <div class="menu-item" onclick="mudarAba('cartoes')"><i>💳</i> Cartões</div>
       <div class="menu-item" onclick="mudarAba('cilios')"><i>✨</i> Cílios</div>
       <div class="menu-item" onclick="mudarAba('entradas')"><i>💰</i> Outras Entradas</div>
-    </div>
-
-    <div class="menu-group">
-      <div class="menu-title">Ajustes</div>
-      <div class="menu-item" onclick="configurarSalario()"><i>⚙️</i> Configurar Salário</div>
     </div>
 
     <div class="backup-area">
@@ -245,7 +267,10 @@
             <div class="card bg-verde">
               <div class="card-header">
                 <span>Salário Líquido</span>
-                <button class="card-icon-btn" onclick="abrirModalHorasExtras()" title="Adicionar Horas Extras">⚙️</button>
+                <div style="display:flex; gap:5px;">
+                  <button class="card-icon-btn" onclick="abrirModalHorasExtras()" title="Adicionar Horas Extras">⏱️</button>
+                  <button class="card-icon-btn" onclick="abrirModalConfigSalario()" title="Configurar Salário">⚙️</button>
+                </div>
               </div>
               <div class="card-valor" id="dashSalarioLiq">R$ 0,00</div>
               <div class="card-sub" id="dashSalarioDetalhe">Bruto: R$ 0,00 | Líquido</div>
@@ -331,17 +356,14 @@
     <section id="view-cartoes" class="view-section">
       <div class="lista-card" style="margin-bottom: 20px;">
         <div class="lista-header"><span>Faturas Simples (Mensais)</span></div>
-        <div class="form-inline">
-          <select id="cartaoNome" style="flex: 1;">
-            <option value="Mercado Pago">Mercado Pago</option>
-            <option value="Nubank">Nubank</option>
-            <option value="Renner">Renner</option>
-            <option value="C&A">C&A</option>
-            <option value="Riachuelo">Riachuelo</option>
-            <option value="Shopee">Shopee</option>
-            <option value="Mercado Livre">Mercado Livre</option>
-            <option value="Shein">Shein</option>
-          </select>
+        
+        <!-- Grid de Logos -->
+        <div class="grid-cartoes" id="gridCartoesSimples">
+          <!-- Preenchido via JS -->
+        </div>
+
+        <div class="form-inline" style="margin-top: 0;">
+          <input type="text" id="cartaoNomeSelected" placeholder="Cartão selecionado" readonly style="background:#f5f5f5; font-weight:bold; color:#222;">
           <input type="number" id="cartaoValor" placeholder="Valor Fatura (R$)" step="0.01">
           <input type="number" id="cartaoDia" placeholder="Dia venc." min="1" max="31">
           <button class="btn" onclick="adicionarCartao()">Adicionar</button>
@@ -352,17 +374,14 @@
 
       <div class="lista-card">
         <div class="lista-header"><span>Compras Parceladas</span></div>
-        <div class="form-inline">
-          <select id="parcCartao" style="flex: 1;">
-            <option value="Mercado Pago">Mercado Pago</option>
-            <option value="Nubank">Nubank</option>
-            <option value="Renner">Renner</option>
-            <option value="C&A">C&A</option>
-            <option value="Riachuelo">Riachuelo</option>
-            <option value="Shopee">Shopee</option>
-            <option value="Mercado Livre">Mercado Livre</option>
-            <option value="Shein">Shein</option>
-          </select>
+        
+        <!-- Grid de Logos -->
+        <div class="grid-cartoes" id="gridCartoesParcelados">
+          <!-- Preenchido via JS -->
+        </div>
+
+        <div class="form-inline" style="margin-top: 0;">
+          <input type="text" id="parcCartaoSelected" placeholder="Cartão selecionado" readonly style="background:#f5f5f5; font-weight:bold; color:#222;">
           <input type="text" id="parcNome" placeholder="Descrição da compra" style="flex: 2;">
           <input type="number" id="parcValorTotal" placeholder="Valor Total (R$)" step="0.01">
           <input type="number" id="parcQtd" placeholder="Nº Parcelas" min="2" max="48">
@@ -404,6 +423,21 @@
   </main>
 
   <!-- MODAIS -->
+  <div class="modal-overlay" id="modalConfigSalario">
+    <div class="modal-content">
+      <div class="modal-header"><span>Configurar Salário</span><button class="modal-close" onclick="fecharModalConfigSalario()">&times;</button></div>
+      <div class="modal-form">
+        <label>Salário Total Bruto (já com vale) (R$)</label>
+        <input type="number" id="inputSalarioBruto" step="0.01" placeholder="0,00">
+        <label>Convênio Médico Fixo (R$)</label>
+        <input type="number" id="inputConvenioMedico" step="0.01" placeholder="0,00">
+        <label>Convênio Odontológico Fixo (R$)</label>
+        <input type="number" id="inputConvenioOdonto" step="0.01" placeholder="0,00">
+        <button class="btn" onclick="salvarConfigSalario()" style="margin-top: 10px;">Salvar Configurações</button>
+      </div>
+    </div>
+  </div>
+
   <div class="modal-overlay" id="modalHorasExtras">
     <div class="modal-content">
       <div class="modal-header"><span>Horas Extras</span><button class="modal-close" onclick="fecharModalHorasExtras()">&times;</button></div>
@@ -432,7 +466,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
     import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
-    import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+    import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyD81zzCOzX3R_qLFl80hj3KxqZ_keYNSFQ",
@@ -447,6 +481,9 @@
     const db = getFirestore(app);
     const auth = getAuth(app);
 
+    // Força a persistência local do login (mantém logado)
+    setPersistence(auth, browserLocalPersistence).catch(console.error);
+
     window.firebaseDB = db; window.firebaseDoc = doc; window.firebaseGetDoc = getDoc; window.firebaseSetDoc = setDoc;
     window.firebaseAuth = auth; window.firebaseSignIn = signInWithEmailAndPassword; window.firebaseSignOut = signOut;
     window.firebaseOnAuth = onAuthStateChanged;
@@ -455,22 +492,54 @@
 
   <!-- SCRIPT PRINCIPAL -->
   <script>
-    const STORAGE_KEY = 'financas_v8';
+    const STORAGE_KEY = 'financas_v9'; // Atualizado
     let estado = {
       salarioTotalBruto: 3398.00, horasExtras: 0, convenioMedico: 76.19, convenioOdonto: 22.81,
       contas: [], fixas: [], cartoes: [], comprasParceladas: [], cilios: [], entradas: [], descontosEsporadicos: []
     };
     let mesSelecionado = "";
     let currentUser = null;
+    
+    // Variáveis de seleção visual de cartão
+    let cartaoSimplesSelecionado = "";
+    let cartaoParceladoSelecionado = "";
+
+    // Lista de cartões (Ordem Alfabética)
+    const listaCartoes = [
+      { nome: 'C&A', logo: 'logo-cea' },
+      { nome: 'Mercado Livre', logo: 'logo-mercadolivre' },
+      { nome: 'Mercado Pago', logo: 'logo-mp' },
+      { nome: 'Nubank', logo: 'logo-nu' },
+      { nome: 'Renner', logo: 'logo-renner' },
+      { nome: 'Riachuelo', logo: 'logo-riachuelo' },
+      { nome: 'Shein', logo: 'logo-shein' },
+      { nome: 'Shopee', logo: 'logo-shopee' }
+    ];
+
+    // Função para lembrar o e-mail
+    window.addEventListener('load', () => {
+      const savedEmail = localStorage.getItem('financeGirlSavedEmail');
+      if (savedEmail) {
+        document.getElementById('loginEmail').value = savedEmail;
+        document.getElementById('rememberEmail').checked = true;
+      }
+    });
 
     async function fazerLogin() {
       const email = document.getElementById('loginEmail').value;
       const pass = document.getElementById('loginPassword').value;
+      const remember = document.getElementById('rememberEmail').checked;
       const errorDiv = document.getElementById('loginError');
       errorDiv.style.display = 'none';
 
+      if (remember) {
+        localStorage.setItem('financeGirlSavedEmail', email);
+      } else {
+        localStorage.removeItem('financeGirlSavedEmail');
+      }
+
       if (!window.firebaseAuth) {
-        errorDiv.textContent = "O Firebase ainda está carregando. Aguarde 2 segundos e tente novamente.";
+        errorDiv.textContent = "O Firebase ainda está carregando. Aguarde 2 segundos.";
         errorDiv.style.display = 'block';
         return;
       }
@@ -500,6 +569,9 @@
               document.getElementById('mainContent').classList.add('active');
               document.getElementById('userAvatar').textContent = user.email.charAt(0).toUpperCase();
               await carregar();
+              
+              // Inicializa a UI
+              renderCartoesUI();
               renderTudo();
             } else {
               currentUser = null;
@@ -574,16 +646,67 @@
       document.getElementById('overlayMenu').classList.toggle('active');
     }
 
-    function configurarSalario() {
-      const base = prompt("Salário Total Bruto (já com vale) (R$):", estado.salarioTotalBruto);
-      if (base !== null) estado.salarioTotalBruto = parseFloat(base.replace(',', '.')) || 0;
-      const med = prompt("Convênio Médico Fixo (R$):", estado.convenioMedico);
-      if (med !== null) estado.convenioMedico = parseFloat(med.replace(',', '.')) || 0;
-      const odonto = prompt("Convênio Odontológico Fixo (R$):", estado.convenioOdonto);
-      if (odonto !== null) estado.convenioOdonto = parseFloat(odonto.replace(',', '.')) || 0;
-      salvar(); renderTudo();
+    /* ================= CONFIG SALÁRIO E MODAIS ================= */
+    function abrirModalConfigSalario() {
+      document.getElementById('inputSalarioBruto').value = estado.salarioTotalBruto;
+      document.getElementById('inputConvenioMedico').value = estado.convenioMedico;
+      document.getElementById('inputConvenioOdonto').value = estado.convenioOdonto;
+      document.getElementById('modalConfigSalario').classList.add('active');
+    }
+    function fecharModalConfigSalario() {
+      document.getElementById('modalConfigSalario').classList.remove('active');
+    }
+    function salvarConfigSalario() {
+      estado.salarioTotalBruto = parseFloat(document.getElementById('inputSalarioBruto').value) || 0;
+      estado.convenioMedico = parseFloat(document.getElementById('inputConvenioMedico').value) || 0;
+      estado.convenioOdonto = parseFloat(document.getElementById('inputConvenioOdonto').value) || 0;
+      salvar(); renderTudo(); fecharModalConfigSalario();
     }
 
+    function abrirModalHorasExtras() {
+      document.getElementById('inputHorasExtras').value = estado.horasExtras > 0 ? estado.horasExtras : '';
+      document.getElementById('modalHorasExtras').classList.add('active');
+    }
+    function fecharModalHorasExtras() { document.getElementById('modalHorasExtras').classList.remove('active'); }
+    function salvarHorasExtras() {
+      const valor = parseFloat(document.getElementById('inputHorasExtras').value) || 0;
+      estado.horasExtras = valor; salvar(); renderTudo(); fecharModalHorasExtras();
+    }
+
+    function abrirModalDescontos() {
+      document.getElementById('modalDescontos').classList.add('active');
+      renderListaDescontosModal();
+    }
+    function fecharModalDescontos() { document.getElementById('modalDescontos').classList.remove('active'); }
+    function adicionarDescontoEsporadico() {
+      const nome = document.getElementById('descNome').value.trim();
+      const valor = parseFloat(document.getElementById('descValor').value);
+      if (!nome || isNaN(valor) || valor <= 0) return alert('Preencha o nome e um valor válido.');
+      estado.descontosEsporadicos.push({ id: Date.now().toString(), mes: mesSelecionado, nome, valor });
+      salvar(); renderTudo();
+      document.getElementById('descNome').value = ''; document.getElementById('descValor').value = '';
+    }
+    function removerDescontoEsporadico(id) {
+      if (!confirm('Remover este desconto?')) return;
+      estado.descontosEsporadicos = estado.descontosEsporadicos.filter(d => d.id !== id);
+      salvar(); renderTudo();
+    }
+    function renderListaDescontosModal() {
+      const container = document.getElementById('listaDescontosEsporadicos');
+      const descontosMes = estado.descontosEsporadicos.filter(d => d.mes === mesSelecionado);
+      if (descontosMes.length === 0) { container.innerHTML = '<div class="vazio" style="padding: 10px;">Nenhum desconto extra neste mês.</div>'; return; }
+      container.innerHTML = descontosMes.map(d => `
+        <div class="lista-item" style="padding: 8px 12px; margin-bottom: 0;">
+          <div class="item-info"><div><div class="item-nome">${escapeHtml(d.nome)}</div></div></div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span class="item-valor" style="color:#c62828;">- ${formatarReal(d.valor)}</span>
+            <button class="btn btn-perigo" style="padding:4px 8px; font-size:0.7rem; width:auto;" onclick="removerDescontoEsporadico('${d.id}')">X</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    /* ================= CÁLCULOS ================= */
     function calcularINSS(salarioBruto) {
       const faixas = [
         { limite: 1621.00, aliquota: 0.075 }, { limite: 2902.84, aliquota: 0.09 },
@@ -610,9 +733,50 @@
     function ajustarFimSemana(data) { while (true) { const dow = data.getDay(); if (dow === 0 || dow === 6 || ehFeriado(data)) { data.setDate(data.getDate() - 1); } else break; } return data; }
     function formatarData(data) { return data.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' }); }
 
-    function getIconeCartao(nome) {
-      const map = { 'Mercado Pago': 'icon-mp', 'Nubank': 'icon-nu', 'Renner': 'icon-renner', 'C&A': 'icon-cea', 'Riachuelo': 'icon-riachuelo', 'Shopee': 'icon-shopee', 'Mercado Livre': 'icon-mercadolivre', 'Shein': 'icon-shein' };
-      return map[nome] || 'icon-mp';
+    function getClasseLogoCartao(nome) {
+      const cartao = listaCartoes.find(c => c.nome === nome);
+      return cartao ? cartao.logo : 'logo-mp';
+    }
+
+    /* ================= RENDER UI ================= */
+    function renderCartoesUI() {
+      const gridSimples = document.getElementById('gridCartoesSimples');
+      const gridParcelado = document.getElementById('gridCartoesParcelados');
+      
+      let htmlSimples = '';
+      let htmlParcelado = '';
+
+      listaCartoes.forEach(cartao => {
+        const selectedClass = cartaoSimplesSelecionado === cartao.nome ? 'selected' : '';
+        htmlSimples += `
+          <div class="cartao-btn ${selectedClass}" onclick="selecionarCartao('${cartao.nome}', 'simples')">
+            <div class="logo-box ${cartao.logo}"></div>
+            <span style="font-size: 0.75rem; font-weight: 500; color: #333;">${cartao.nome}</span>
+          </div>
+        `;
+
+        const selectedClassParc = cartaoParceladoSelecionado === cartao.nome ? 'selected' : '';
+        htmlParcelado += `
+          <div class="cartao-btn ${selectedClassParc}" onclick="selecionarCartao('${cartao.nome}', 'parcelado')">
+            <div class="logo-box ${cartao.logo}"></div>
+            <span style="font-size: 0.75rem; font-weight: 500; color: #333;">${cartao.nome}</span>
+          </div>
+        `;
+      });
+
+      gridSimples.innerHTML = htmlSimples;
+      gridParcelado.innerHTML = htmlParcelado;
+    }
+
+    function selecionarCartao(nome, tipo) {
+      if (tipo === 'simples') {
+        cartaoSimplesSelecionado = nome;
+        document.getElementById('cartaoNomeSelected').value = nome;
+      } else {
+        cartaoParceladoSelecionado = nome;
+        document.getElementById('parcCartaoSelected').value = nome;
+      }
+      renderCartoesUI();
     }
 
     function renderTudo() {
@@ -699,7 +863,7 @@
       let cartoesHtml = cartoesMes.map(c => `
         <div class="lista-item">
           <div class="item-info">
-            <div class="card-icon-box ${getIconeCartao(c.nome)}">${c.nome.charAt(0)}</div>
+            <div class="logo-box ${getClasseLogoCartao(c.nome)}" style="width:32px;height:32px;font-size:0.8rem;"></div>
             <div style="min-width:0;"><div class="item-nome">${c.nome} (Fatura)</div><div class="item-detalhe">Vence dia ${c.dia}</div></div>
           </div>
           <span class="item-valor">${formatarReal(c.valor)}</span>
@@ -714,7 +878,7 @@
           cartoesHtml += `
             <div class="lista-item">
               <div class="item-info">
-                <div class="card-icon-box ${getIconeCartao(p.cartao)}">${p.cartao.charAt(0)}</div>
+                <div class="logo-box ${getClasseLogoCartao(p.cartao)}" style="width:32px;height:32px;font-size:0.8rem;"></div>
                 <div style="min-width:0;"><div class="item-nome">${escapeHtml(p.nome)}</div><div class="item-detalhe">Parcela ${parcelaAtualIndex+1}/${p.qtdParcelas}</div></div>
               </div>
               <span class="item-valor">${formatarReal(valorParcela)}</span>
@@ -768,6 +932,7 @@
       container.innerHTML = html;
     }
 
+    /* ================= AÇÕES CRUD ================= */
     function adicionarConta() {
       const nome = document.getElementById('contaNome').value.trim();
       const valor = parseFloat(document.getElementById('contaValor').value);
@@ -789,17 +954,18 @@
     }
 
     function adicionarCartao() {
-      const nome = document.getElementById('cartaoNome').value;
+      if (!cartaoSimplesSelecionado) return alert('Selecione um cartão clicando no logo acima.');
       const valor = parseFloat(document.getElementById('cartaoValor').value);
       const dia = parseInt(document.getElementById('cartaoDia').value);
       if (isNaN(valor) || isNaN(dia)) return alert('Preencha valor e dia.');
-      estado.cartoes.push({ id: Date.now().toString(), nome, valor, dia, mesRef: mesSelecionado });
+      
+      estado.cartoes.push({ id: Date.now().toString(), nome: cartaoSimplesSelecionado, valor, dia, mesRef: mesSelecionado });
       salvar(); renderTudo();
       document.getElementById('cartaoValor').value = ''; document.getElementById('cartaoDia').value = '';
     }
 
     function adicionarCompraParcelada() {
-      const cartao = document.getElementById('parcCartao').value;
+      if (!cartaoParceladoSelecionado) return alert('Selecione um cartão clicando no logo acima.');
       const nome = document.getElementById('parcNome').value.trim();
       const valorTotal = parseFloat(document.getElementById('parcValorTotal').value);
       const qtdParcelas = parseInt(document.getElementById('parcQtd').value);
@@ -807,7 +973,7 @@
       if (!nome || isNaN(valorTotal) || isNaN(qtdParcelas) || qtdParcelas < 2) {
         return alert('Preencha os dados corretamente (mínimo 2 parcelas).');
       }
-      estado.comprasParceladas.push({ id: Date.now().toString(), cartao, nome, valorTotal, qtdParcelas, mesInicio: mesSelecionado });
+      estado.comprasParceladas.push({ id: Date.now().toString(), cartao: cartaoParceladoSelecionado, nome, valorTotal, qtdParcelas, mesInicio: mesSelecionado });
       salvar(); renderTudo();
       document.getElementById('parcNome').value = ''; document.getElementById('parcValorTotal').value = ''; document.getElementById('parcQtd').value = '';
     }
@@ -849,7 +1015,7 @@
         <div class="lista-item ${c.paga ? 'paga' : ''}">
           <div class="item-info">
             <div class="checkbox ${c.paga ? 'checked' : ''}" onclick="togglePaga('${c.id}')"></div>
-            <div class="card-icon-box ${getIconeCartao(c.nome)}" style="width:32px;height:32px;font-size:0.9rem;">${c.nome.charAt(0)}</div>
+            <div class="logo-box ${getClasseLogoCartao(c.nome)}" style="width:32px;height:32px;font-size:0.8rem;"></div>
             <div style="min-width:0;"><div class="item-nome">${c.nome}</div><div class="item-detalhe">Vence dia ${c.dia}</div></div>
           </div>
           <div style="display:flex; align-items:center; gap:8px;">
@@ -882,7 +1048,7 @@
         <div class="lista-item" style="flex-direction: column; align-items: stretch; gap: 8px;">
           <div style="display:flex; justify-content:space-between; align-items:flex-start;">
             <div class="item-info">
-              <div class="card-icon-box ${getIconeCartao(p.cartao)}" style="width:32px;height:32px;font-size:0.9rem;">${p.cartao.charAt(0)}</div>
+              <div class="logo-box ${getClasseLogoCartao(p.cartao)}" style="width:32px;height:32px;font-size:0.8rem;"></div>
               <div>
                 <div class="item-nome">${escapeHtml(p.nome)} (${p.qtdParcelas}x)</div>
                 <div class="item-detalhe">${p.cartao} | Início: ${formatarMes(p.mesInicio)}</div>
@@ -951,49 +1117,6 @@
     }
     function removerEntrada(id) { if(confirm('Excluir?')) { estado.entradas = estado.entradas.filter(e => e.id !== id); salvar(); renderTudo(); } }
 
-    function abrirModalHorasExtras() {
-      document.getElementById('inputHorasExtras').value = estado.horasExtras > 0 ? estado.horasExtras : '';
-      document.getElementById('modalHorasExtras').classList.add('active');
-    }
-    function fecharModalHorasExtras() { document.getElementById('modalHorasExtras').classList.remove('active'); }
-    function salvarHorasExtras() {
-      const valor = parseFloat(document.getElementById('inputHorasExtras').value) || 0;
-      estado.horasExtras = valor; salvar(); renderTudo(); fecharModalHorasExtras();
-    }
-
-    function abrirModalDescontos() {
-      document.getElementById('modalDescontos').classList.add('active');
-      renderListaDescontosModal();
-    }
-    function fecharModalDescontos() { document.getElementById('modalDescontos').classList.remove('active'); }
-    function adicionarDescontoEsporadico() {
-      const nome = document.getElementById('descNome').value.trim();
-      const valor = parseFloat(document.getElementById('descValor').value);
-      if (!nome || isNaN(valor) || valor <= 0) return alert('Preencha o nome e um valor válido.');
-      estado.descontosEsporadicos.push({ id: Date.now().toString(), mes: mesSelecionado, nome, valor });
-      salvar(); renderTudo();
-      document.getElementById('descNome').value = ''; document.getElementById('descValor').value = '';
-    }
-    function removerDescontoEsporadico(id) {
-      if (!confirm('Remover este desconto?')) return;
-      estado.descontosEsporadicos = estado.descontosEsporadicos.filter(d => d.id !== id);
-      salvar(); renderTudo();
-    }
-    function renderListaDescontosModal() {
-      const container = document.getElementById('listaDescontosEsporadicos');
-      const descontosMes = estado.descontosEsporadicos.filter(d => d.mes === mesSelecionado);
-      if (descontosMes.length === 0) { container.innerHTML = '<div class="vazio" style="padding: 10px;">Nenhum desconto extra neste mês.</div>'; return; }
-      container.innerHTML = descontosMes.map(d => `
-        <div class="lista-item" style="padding: 8px 12px; margin-bottom: 0;">
-          <div class="item-info"><div><div class="item-nome">${escapeHtml(d.nome)}</div></div></div>
-          <div style="display:flex; align-items:center; gap:8px;">
-            <span class="item-valor" style="color:#c62828;">- ${formatarReal(d.valor)}</span>
-            <button class="btn btn-perigo" style="padding:4px 8px; font-size:0.7rem; width:auto;" onclick="removerDescontoEsporadico('${d.id}')">X</button>
-          </div>
-        </div>
-      `).join('');
-    }
-
     function mudarAba(aba) {
       document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
       const itens = document.querySelectorAll('.menu-item');
@@ -1015,8 +1138,10 @@
 
     function escapeHtml(s) { return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 
+    // Fechar modais ao clicar fora
     document.getElementById('modalDescontos').addEventListener('click', function(e) { if (e.target === this) fecharModalDescontos(); });
     document.getElementById('modalHorasExtras').addEventListener('click', function(e) { if (e.target === this) fecharModalHorasExtras(); });
+    document.getElementById('modalConfigSalario').addEventListener('click', function(e) { if (e.target === this) fecharModalConfigSalario(); });
   </script>
 </body>
 </html>
