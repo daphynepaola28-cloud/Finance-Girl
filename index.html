@@ -382,37 +382,28 @@
       </div>
     </section>
 
-    <!-- CARTÕES -->
+        <!-- CARTÕES -->
     <section id="view-cartoes" class="view-section">
-      <div class="lista-card" style="margin-bottom: 20px;">
-        <div class="lista-header"><span>Faturas Simples (Mensais)</span></div>
+      <div class="lista-card">
+        <div class="lista-header"><span>Faturas e Compras Parceladas</span></div>
         
+        <!-- Seleção de Cartão (Unificada) -->
         <div class="grid-cartoes" id="gridCartoesSimples"></div>
 
-        <div class="form-inline" style="margin-top: 0;">
-          <input type="text" id="cartaoNomeSelected" placeholder="Cartão selecionado" readonly style="background:#f5f5f5; font-weight:bold; color:#222;">
-          <input type="number" id="cartaoValor" placeholder="Valor Fatura (R$)" step="0.01">
-          <input type="number" id="cartaoDia" placeholder="Dia venc." min="1" max="31">
-          <button class="btn" onclick="adicionarCartao()">Adicionar</button>
+        <!-- Formulário Unificado -->
+        <div class="form-inline" style="margin-top: 0; flex-wrap: wrap;">
+          <input type="text" id="cartaoNomeSelected" placeholder="Cartão selecionado" readonly style="background:#f5f5f5; font-weight:bold; color:#222; flex: 1; min-width: 100px;">
+          <input type="text" id="compraDescricao" placeholder="Descrição da compra" style="flex: 2; min-width: 150px;">
+          <input type="number" id="compraValorTotal" placeholder="Valor Total (R$)" step="0.01" style="flex: 1;">
+          <input type="number" id="compraParcelas" placeholder="Parcelas (ex: 1)" min="1" max="48" value="1" style="flex: 1;">
+          <input type="number" id="compraDia" placeholder="Dia venc." min="1" max="31" style="flex: 1;">
+          <button class="btn" onclick="adicionarCompraCartao()">Adicionar Compra</button>
         </div>
-        <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
-        <div id="listaCartoesCompleta"></div>
-      </div>
-
-      <div class="lista-card">
-        <div class="lista-header"><span>Compras Parceladas</span></div>
         
-        <div class="grid-cartoes" id="gridCartoesParcelados"></div>
-
-        <div class="form-inline" style="margin-top: 0;">
-          <input type="text" id="parcCartaoSelected" placeholder="Cartão selecionado" readonly style="background:#f5f5f5; font-weight:bold; color:#222;">
-          <input type="text" id="parcNome" placeholder="Descrição da compra" style="flex: 2;">
-          <input type="number" id="parcValorTotal" placeholder="Valor Total (R$)" step="0.01">
-          <input type="number" id="parcQtd" placeholder="Nº Parcelas" min="2" max="48">
-          <button class="btn" onclick="adicionarCompraParcelada()">Adicionar</button>
-        </div>
         <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
-        <div id="listaComprasParceladas"></div>
+        
+        <!-- Lista de Compras e Faturas do Cartão -->
+        <div id="listaCartoesCompleta"></div>
       </div>
     </section>
 
@@ -598,7 +589,7 @@
         { id: 'medico', nome: 'Convênio Médico', valor: 76.19 },
         { id: 'odonto', nome: 'Convênio Odontológico', valor: 22.81 }
       ],
-      contas: [], fixas: [], cartoes: [], comprasParceladas: [], cilios: [], entradas: [], descontosEsporadicos: [],
+      contas: [], fixas: [], cartoes: [], cilios: [], entradas: [], descontosEsporadicos: [],
       investimentos: [], 
       extrato: []
     };
@@ -1443,29 +1434,37 @@
       document.getElementById('fixaNome').value = ''; document.getElementById('fixaValor').value = ''; document.getElementById('fixaDia').value = '';
     }
 
-    function adicionarCartao() {
+        function adicionarCompraCartao() {
       if (!cartaoSimplesSelecionado) return alert('Selecione um cartão clicando no logo acima.');
-      const valor = parseFloat(document.getElementById('cartaoValor').value);
-      const dia = parseInt(document.getElementById('cartaoDia').value);
-      if (isNaN(valor) || isNaN(dia)) return alert('Preencha valor e dia.');
       
-      estado.cartoes.push({ id: Date.now().toString(), nome: cartaoSimplesSelecionado, valor, dia, mesRef: mesSelecionado, paga: false });
-      salvar(); renderTudo();
-      document.getElementById('cartaoValor').value = ''; document.getElementById('cartaoDia').value = '';
-    }
+      const descricao = document.getElementById('compraDescricao').value.trim();
+      const valorTotal = parseFloat(document.getElementById('compraValorTotal').value);
+      const parcelas = parseInt(document.getElementById('compraParcelas').value) || 1;
+      const dia = parseInt(document.getElementById('compraDia').value);
 
-    function adicionarCompraParcelada() {
-      if (!cartaoParceladoSelecionado) return alert('Selecione um cartão clicando no logo acima.');
-      const nome = document.getElementById('parcNome').value.trim();
-      const valorTotal = parseFloat(document.getElementById('parcValorTotal').value);
-      const qtdParcelas = parseInt(document.getElementById('parcQtd').value);
-
-      if (!nome || isNaN(valorTotal) || isNaN(qtdParcelas) || qtdParcelas < 2) {
-        return alert('Preencha os dados corretamente (mínimo 2 parcelas).');
+      if (!descricao || isNaN(valorTotal) || valorTotal <= 0 || isNaN(dia)) {
+        return alert('Preencha a descrição, o valor e o dia de vencimento.');
       }
-      estado.comprasParceladas.push({ id: Date.now().toString(), cartao: cartaoParceladoSelecionado, nome, valorTotal, qtdParcelas, mesInicio: mesSelecionado });
+
+      // Cria a compra unificada
+      estado.cartoes.push({ 
+        id: Date.now().toString(), 
+        nome: cartaoSimplesSelecionado, 
+        descricao: descricao, 
+        valorTotal: valorTotal, 
+        qtdParcelas: parcelas, 
+        dia: dia, 
+        mesRef: mesSelecionado, 
+        paga: false 
+      });
+
       salvar(); renderTudo();
-      document.getElementById('parcNome').value = ''; document.getElementById('parcValorTotal').value = ''; document.getElementById('parcQtd').value = '';
+      
+      // Limpa os campos
+      document.getElementById('compraDescricao').value = ''; 
+      document.getElementById('compraValorTotal').value = ''; 
+      document.getElementById('compraParcelas').value = '1';
+      document.getElementById('compraDia').value = '';
     }
 
     function togglePaga(id) {
@@ -1478,12 +1477,6 @@
       if (tipo === 'contas') estado.contas = estado.contas.filter(c => c.id !== id);
       if (tipo === 'fixas') estado.fixas = estado.fixas.filter(c => c.id !== id);
       if (tipo === 'cartoes') estado.cartoes = estado.cartoes.filter(c => c.id !== id);
-      salvar(); renderTudo();
-    }
-
-    function removerCompraParcelada(id) {
-      if (!confirm('Excluir esta compra parcelada?')) return;
-      estado.comprasParceladas = estado.comprasParceladas.filter(c => c.id !== id);
       salvar(); renderTudo();
     }
 
