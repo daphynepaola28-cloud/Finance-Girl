@@ -1320,43 +1320,27 @@
 
       renderListaGenerica(contasMes, 'dashListaContas', 'Nenhuma conta variável.');
       
-      const cartoesContainer = document.getElementById('dashCartoesResumo');
-      let cartoesHtml = cartoesMes.map(c => `
+           const cartoesContainer = document.getElementById('dashCartoesResumo');
+      let cartoesHtml = cartoesMes.map(c => {
+        const valorParcela = c.valorTotal / c.qtdParcelas;
+        return `
         <div class="lista-item">
           <div class="item-info">
             <div class="logo-box ${getClasseLogoCartao(c.nome)}" style="width:32px;height:32px;font-size:0.8rem;">
               ${listaCartoes.find(lc => lc.nome === c.nome)?.svg || ''}
             </div>
-            <div style="min-width:0;"><div class="item-nome">${c.nome} (Fatura)</div><div class="item-detalhe">Vence dia ${c.dia}</div></div>
-          </div>
-          <span class="item-valor">${formatarReal(c.valor)}</span>
-        </div>
-      `).join('');
-
-      estado.comprasParceladas.forEach(p => {
-        const inicioNum = mesParaNumero(p.mesInicio);
-        const parcelaAtualIndex = mesSelecionadoNum - inicioNum;
-        if (parcelaAtualIndex >= 0 && parcelaAtualIndex < p.qtdParcelas) {
-          const valorParcela = p.valorTotal / p.qtdParcelas;
-          cartoesHtml += `
-            <div class="lista-item">
-              <div class="item-info">
-                <div class="logo-box ${getClasseLogoCartao(p.cartao)}" style="width:32px;height:32px;font-size:0.8rem;">
-                  ${listaCartoes.find(lc => lc.nome === p.cartao)?.svg || ''}
-                </div>
-                <div style="min-width:0;"><div class="item-nome">${escapeHtml(p.nome)}</div><div class="item-detalhe">Parcela ${parcelaAtualIndex+1}/${p.qtdParcelas}</div></div>
-              </div>
-              <span class="item-valor">${formatarReal(valorParcela)}</span>
+            <div style="min-width:0;">
+              <div class="item-nome">${escapeHtml(c.descricao || c.nome)}</div>
+              <div class="item-detalhe">${c.qtdParcelas > 1 ? `${c.qtdParcelas}x de` : 'Fatura'} ${c.dia}</div>
             </div>
-          `;
-        }
-      });
+          </div>
+          <span class="item-valor">${formatarReal(valorParcela)}</span>
+        </div>
+        `;
+      }).join('');
 
       if (!cartoesHtml) cartoesHtml = '<div class="vazio">Nenhuma fatura/parcela.</div>';
       cartoesContainer.innerHTML = cartoesHtml;
-
-      renderCalendario(ano, mes - 1);
-    }
 
     function renderListaGenerica(lista, containerId, vazioMsg) {
       const container = document.getElementById(containerId);
