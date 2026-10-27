@@ -169,7 +169,53 @@
   /* LOGOS VETORIAIS */
   .logo-box { width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold; font-size: 1.2rem; color: #fff; overflow: hidden; }
   .logo-box svg { width: 100%; height: 100%; }
-  
+  /* NOVOS CARDS DE RESUMO DOS CARTÕES */
+  .cards-resumo-cartoes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .card-resumo {
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+  }
+  .card-resumo:hover {
+    border-color: #ccc;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.05);
+    z-index: 10;
+  }
+  .card-resumo-total {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(34, 34, 34, 0.95);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
+  }
+  .card-resumo:hover .card-resumo-total {
+    opacity: 1;
+  }
+  .card-resumo-total .label { font-size: 0.7rem; letter-spacing: 1px; text-transform: uppercase; color: #aaa; margin-bottom: 4px;}
+  .card-resumo-total .valor { font-size: 1.2rem; font-weight: bold; }  
   .logo-renner { background: #fff; border: 2px solid #e30613; color: #e30613; font-family: serif; font-size: 1.4rem; border-radius: 50%; font-weight: bold;}
   .logo-renner::before { content: "R"; }
   .logo-riachuelo { background: #000; font-size: 0.8rem; font-weight: bold; border-radius: 4px;}
@@ -383,14 +429,11 @@
     </section>
 
     <!-- CARTÕES -->
-    <section id="view-cartoes" class="view-section">
-      <div class="lista-card">
+          <div class="lista-card">
         <div class="lista-header"><span>Faturas e Compras Parceladas</span></div>
         
-        <!-- Seleção de Cartão (Unificada) -->
         <div class="grid-cartoes" id="gridCartoesSimples"></div>
 
-        <!-- Formulário Unificado -->
         <div class="form-inline" style="margin-top: 0; flex-wrap: wrap;">
           <input type="text" id="cartaoNomeSelected" placeholder="Cartão selecionado" readonly style="background:#f5f5f5; font-weight:bold; color:#222; flex: 1; min-width: 100px;">
           <input type="text" id="compraDescricao" placeholder="Descrição da compra" style="flex: 2; min-width: 150px;">
@@ -402,7 +445,19 @@
         
         <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
         
+        <!-- NOVO: Resumo por cartão -->
+        <div class="cards-resumo-cartoes" id="resumoCartoes"></div>
+        
+        <!-- Lista detalhada -->
+        <div id="listaCartoesCompleta"></div>
+      </div>
+        
+        <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
+        
         <!-- Lista de Compras e Faturas do Cartão -->
+        <div class="cards-resumo-cartoes" id="resumoCartoes"></div>
+        
+        <div id="listaCartoesCompleta"></div>
         <div id="listaCartoesCompleta"></div>
       </div>
     </section>
@@ -1462,16 +1517,54 @@
       renderListaGenerica(estado.fixas, 'listaFixasCompleta', 'Nenhuma despesa fixa cadastrada.');
     }
 
-    function renderCartoesAba() {
+        function renderCartoesAba() {
       const cartoesMes = estado.cartoes.filter(c => c.mesRef === mesSelecionado);
-      const container = document.getElementById('listaCartoesCompleta');
+      const containerResumo = document.getElementById('resumoCartoes');
+      const containerLista = document.getElementById('listaCartoesCompleta');
       
+      // Limpa os containers
+      containerResumo.innerHTML = '';
+      containerLista.innerHTML = '';
+
       if (cartoesMes.length === 0) { 
-        container.innerHTML = '<div class="vazio">Nenhuma compra ou fatura cadastrada.</div>'; 
+        containerLista.innerHTML = '<div class="vazio">Nenhuma compra ou fatura cadastrada.</div>'; 
         return; 
       }
-      
-      container.innerHTML = cartoesMes.map(c => {
+
+      // 1. Agrupar por cartão
+      const agrupado = {};
+      cartoesMes.forEach(c => {
+        if (!agrupado[c.nome]) {
+          agrupado[c.nome] = { total: 0, itens: [] };
+        }
+        const valorParcela = c.valorTotal / (c.qtdParcelas || 1);
+        agrupado[c.nome].total += valorParcela;
+        agrupado[c.nome].itens.push(c);
+      });
+
+      // 2. Renderizar os Cards de Resumo
+      let htmlResumo = '';
+      Object.keys(agrupado).forEach(nomeCartao => {
+        const grupo = agrupado[nomeCartao];
+        htmlResumo += `
+          <div class="card-resumo">
+            <div class="logo-box ${getClasseLogoCartao(nomeCartao)}" style="width:40px;height:40px;font-size:1rem; margin-bottom: 8px;">
+              ${listaCartoes.find(lc => lc.nome === nomeCartao)?.svg || ''}
+            </div>
+            <div style="font-weight: 600; font-size: 0.85rem;">${nomeCartao}</div>
+            
+            <!-- Tooltip com o Total -->
+            <div class="card-resumo-total">
+              <div class="label">Total do Mês</div>
+              <div class="valor">${formatarReal(grupo.total)}</div>
+            </div>
+          </div>
+        `;
+      });
+      containerResumo.innerHTML = htmlResumo;
+
+      // 3. Renderizar a Lista Detalhada
+      containerLista.innerHTML = cartoesMes.map(c => {
         const valorParcela = c.valorTotal / (c.qtdParcelas || 1);
         const textoParcela = c.qtdParcelas > 1 ? `(${c.qtdParcelas}x de ${formatarReal(valorParcela)})` : '';
         
